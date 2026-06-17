@@ -6,10 +6,10 @@
 /* Item */
 .boost {
   border: 1px solid var(--boost-border-color);
-  border-radius: 4rem;
+  border-radius: 11px;
   margin-block-start: calc(var(--block-space-half) / 2);
   opacity: 1;
-  padding: 0.1em 0.2em 0.1em 0.1em;
+  padding: 0.1em 0.4em 0.1em 0.2em;
   transition: opacity 100ms ease-in-out, box-shadow 150ms ease-in-out, transform 150ms ease-in-out;
 
   .boost__action {

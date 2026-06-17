@@ -145,8 +145,8 @@
 
 /* Variants */
 .btn--reversed {
-  --btn-background: var(--color-text);
-  --btn-color: var(--color-text-reversed);
+  --btn-background: var(--color-accent);
+  --btn-color: #080808;
 }
 
 .btn--negative {
@@ -158,6 +158,21 @@
 .btn--negative {
   --btn-border-color: transparent;
   --hover-size: 0;
+  --hover-filter: brightness(0.92);
+}
+
+/* Affirmative (cyan): keep dark icons readable on the accent, both modes */
+.btn--reversed {
+  img:not(.avatar) {
+    filter: invert(0);
+
+    @media (prefers-color-scheme: dark) {
+      filter: invert(0);
+    }
+  }
+}
+
+.btn--negative {
   --hover-filter: brightness(0.7);
 
   img:not(.avatar) {

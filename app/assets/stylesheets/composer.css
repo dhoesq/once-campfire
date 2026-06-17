@@ -152,8 +152,23 @@
 }
 
 .composer__input {
+  box-shadow: 0 2px 10px rgba(8, 8, 8, 0.05);
+
   .composer__rich-text-btn,
   label:has(input[type="file"]) {
     cursor: pointer;
+  }
+
+  /* Accent on the send affordance */
+  [name="send"] {
+    --btn-background: var(--color-accent);
+    --btn-color: #080808;
+    --btn-border-color: transparent;
+    --hover-size: 0;
+    --hover-filter: brightness(0.92);
+
+    img:not(.avatar) {
+      filter: none;
+    }
   }
 }

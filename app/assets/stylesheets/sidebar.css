@@ -207,6 +207,8 @@
 }
 
 .room {
+  --btn-border-radius: 8px;
+
   background-color: var(--color-text-reversed);
   color: var(--color-text);
   font-weight: normal;
@@ -214,30 +216,44 @@
   margin-inline-end: auto;
   max-inline-size: 100%;
 
+  @media (any-hover: hover) {
+    &:where(:not(:active):hover) {
+      --btn-background: var(--color-message-bg);
+    }
+  }
+
   .searches-list & {
-    border-radius: 0.5em;
+    border-radius: 8px;
   }
 
   &.unread {
-    --btn-border-color: var(--color-text);
-    --hover-color: var(--color-text);
+    --btn-border-color: var(--color-accent);
+    --hover-color: var(--color-accent);
 
     font-weight: 600;
 
     &:not(:hover) {
-      box-shadow: 0 0 0 1px var(--color-text);
+      box-shadow: 0 0 0 1px var(--color-accent);
     }
   }
 }
 
 .room--current {
-  --btn-border-radius: 0.5em;
+  --btn-border-radius: 8px;
+  --btn-background: var(--color-accent);
+  --btn-color: #080808;
+  --btn-border-color: transparent;
   --hover-filter: none;
   --num-buttons: 1;
 
   min-block-size: var(--btn-size);
 
   .room__contents {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.35rem;
+    letter-spacing: 0.02em;
+
     .account-has-logo & {
       --num-buttons: 2;
     }

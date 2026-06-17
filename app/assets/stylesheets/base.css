@@ -1,7 +1,8 @@
 :root {
-  --font-family: -apple-system, BlinkMacSystemFont, Aptos, Roboto, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  --hover-color: var(--color-border-darker);
-  --hover-size: 0.15em;
+  --font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-display: "Bebas Neue", var(--font-family);
+  --hover-color: rgba(12, 192, 223, 0.25);
+  --hover-size: 2px;
   --hover-filter: brightness(1);
 }
 
@@ -10,7 +11,7 @@ html, body {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-family);
-  line-height: 1.4;
+  line-height: 1.5;
   overflow: initial;
   text-size-adjust: none;
 }
@@ -113,14 +114,9 @@ legend {
   position: relative;
 
   &::backdrop {
-    background-image: linear-gradient(
-      45deg,
-      #fff500,
-      #ff9f00,
-      #f00,
-      #ec0061
-    );
-    opacity: 0.75;
+    background: rgba(8, 8, 8, 0.6);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
   }
 }
 
