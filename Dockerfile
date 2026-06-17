@@ -35,6 +35,11 @@ COPY Gemfile Gemfile.lock vendor ./
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
+# Cache-bust: bump this value to force a fresh source copy + asset precompile.
+# (Railway was reusing stale cached layers, shipping pre-restyle code/assets.)
+ARG CACHEBUST=20260617-1
+RUN echo "cachebust ${CACHEBUST}"
+
 # Copy application code
 COPY . .
 
