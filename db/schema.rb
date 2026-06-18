@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.2].define(version: 2025_12_12_154340) do
+ActiveRecord::Schema[8.2].define(version: 2026_06_18_120100) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "custom_styles"
@@ -85,12 +85,14 @@ ActiveRecord::Schema[8.2].define(version: 2025_12_12_154340) do
     t.datetime "created_at", null: false
     t.string "involvement", default: "mentions"
     t.integer "room_id", null: false
+    t.datetime "starred_at"
     t.datetime "unread_at"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["room_id", "created_at"], name: "index_memberships_on_room_id_and_created_at"
     t.index ["room_id", "user_id"], name: "index_memberships_on_room_id_and_user_id", unique: true
     t.index ["room_id"], name: "index_memberships_on_room_id"
+    t.index ["user_id", "starred_at"], name: "index_memberships_on_user_id_and_starred_at"
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
@@ -98,9 +100,13 @@ ActiveRecord::Schema[8.2].define(version: 2025_12_12_154340) do
     t.string "client_message_id", null: false
     t.datetime "created_at", null: false
     t.integer "creator_id", null: false
+    t.datetime "pinned_at"
+    t.integer "pinned_by_id"
     t.integer "room_id", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_messages_on_creator_id"
+    t.index ["pinned_by_id"], name: "index_messages_on_pinned_by_id"
+    t.index ["room_id", "pinned_at"], name: "index_messages_on_room_id_and_pinned_at"
     t.index ["room_id"], name: "index_messages_on_room_id"
   end
 

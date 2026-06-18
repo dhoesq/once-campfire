@@ -4,4 +4,5 @@
   <span class="room__hash" aria-hidden="true">#</span>
   <span class="room__name overflow-ellipsis"><%= room.name %></span>
   <span class="room__unread-badge" aria-hidden="true"></span>
+  <%= room_star_toggle room, starred: local_assigns.fetch(:starred, false) %>
 <% end %>

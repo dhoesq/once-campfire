@@ -519,3 +519,80 @@
     visibility: hidden;
   }
 }
+
+/* Star toggle on sidebar room + direct rows. Hidden until row hover; always
+   visible when the row is starred. Pushed to the far end of the row. */
+.room__star {
+  --btn-size: auto;
+  --btn-padding: 0;
+  --btn-background: transparent;
+  --btn-border-color: transparent;
+
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  margin-inline-start: auto;
+  opacity: 0;
+  padding: 0.15em;
+
+  img {
+    block-size: 16px;
+    inline-size: 16px;
+  }
+
+  @media (any-hover: hover) {
+    &:where(:hover) {
+      --icon-filter: none;
+    }
+  }
+}
+
+/* When the row has no unread badge taking the auto margin, the star claims it;
+   when there IS an unread badge, the badge already pushes right, so the star
+   sits just after it without its own auto margin. */
+.room--row.unread .room__star,
+.direct--row.unread .room__star {
+  margin-inline-start: 0.4em;
+}
+
+/* Reveal the star on row hover (pointer devices). */
+@media (any-hover: hover) {
+  .room--row:hover .room__star,
+  .direct--row:hover .room__star {
+    opacity: 0.55;
+  }
+
+  .room--row .room__star:hover,
+  .direct--row .room__star:hover {
+    opacity: 1;
+  }
+}
+
+/* Starred: filled accent star, always shown. */
+.room__star--on {
+  opacity: 1;
+
+  img {
+    filter: none;
+  }
+
+  /* Tint the star with the brand accent via a color overlay. */
+  color: var(--color-accent);
+}
+
+.room__star--on img {
+  /* Recolor the black source SVG to the cyan accent. */
+  filter: invert(63%) sepia(89%) saturate(1352%) hue-rotate(146deg) brightness(94%) contrast(91%);
+}
+
+/* On touch / no-hover devices, always show the star so it stays reachable. */
+@media (any-hover: none) {
+  .room__star {
+    opacity: 0.55;
+  }
+
+  .room__star--on {
+    opacity: 1;
+  }
+}

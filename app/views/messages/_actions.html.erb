@@ -52,6 +52,28 @@
               data: { turbo_frame: dom_id(message, :edit) }, title: "Edit", aria: { label: "Edit"} do %>
           <%= image_tag "pencil.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
         <% end %>
+
+        <% if message.pinned? %>
+          <%= button_to message_pin_path(message), method: :delete,
+                class: "btn message__action-btn center full-width", title: "Unpin", aria: { label: "Unpin message" }, data: { action: "popup#close" } do %>
+            <%= image_tag "pin.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+          <% end %>
+        <% else %>
+          <%= button_to message_pin_path(message), method: :post,
+                class: "btn message__action-btn center full-width", title: "Pin", aria: { label: "Pin message" }, data: { action: "popup#close" } do %>
+            <%= image_tag "pin.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+          <% end %>
+        <% end %>
+
+        <%= link_to new_message_forward_path(message), class: "btn message__action-btn center full-width",
+              data: { turbo_frame: "modal", action: "popup#close" }, title: "Forward", aria: { label: "Forward message" } do %>
+          <%= image_tag "share.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+        <% end %>
+
+        <%= button_to room_read_path(message.room), method: :patch, params: { message_id: message.id },
+              class: "btn message__action-btn center full-width", title: "Mark unread from here", aria: { label: "Mark unread from here" }, data: { action: "popup#close" } do %>
+          <%= image_tag "notification-bell-mentions.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+        <% end %>
       </div>
     </div>
   <% end %>

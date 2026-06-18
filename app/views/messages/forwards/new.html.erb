@@ -1,0 +1,31 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal" data-controller="element-removal">
+    <div class="modal__backdrop" data-action="click->element-removal#remove"></div>
+
+    <div class="modal__panel border shadow" role="dialog" aria-label="Forward message">
+      <header class="modal__header flex align-center gap">
+        <h2 class="txt-medium">Forward message</h2>
+        <%= link_to "#", class: "btn modal__close", data: { action: "element-removal#remove" }, aria: { label: "Close" } do %>
+          <%= image_tag "cancel.svg", size: 20, class: "colorize--black", aria: { hidden: "true" } %>
+        <% end %>
+      </header>
+
+      <p class="txt-small txt-subtle modal__hint">Choose a room or person to forward this message to.</p>
+
+      <div class="modal__list flex flex-column gap">
+        <% @rooms.each do |room| %>
+          <%= button_to message_forward_path(@message), params: { room_id: room.id },
+                form: { data: { turbo_frame: "_top" } },
+                class: "btn forward__room align-center gap full-width txt-nowrap", style: "justify-content: flex-start" do %>
+            <% if room.direct? %>
+              <span class="room__hash" aria-hidden="true">@</span>
+            <% else %>
+              <span class="room__hash" aria-hidden="true">#</span>
+            <% end %>
+            <span class="overflow-ellipsis"><%= room_display_name(room) %></span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

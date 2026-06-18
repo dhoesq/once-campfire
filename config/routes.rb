@@ -68,6 +68,8 @@ Rails.application.routes.draw do
       resource :refresh, only: :show
       resource :settings, only: :show
       resource :involvement, only: %i[ show update ]
+      resource :star, only: %i[ create destroy ]
+      resource :read, only: :update
     end
 
     get "@:message_id", to: "rooms#show", as: :at_message
@@ -82,6 +84,8 @@ Rails.application.routes.draw do
   resources :messages do
     scope module: "messages" do
       resources :boosts
+      resource :pin, only: %i[ create destroy ]
+      resource :forward, only: %i[ new create ]
     end
   end
 

@@ -3,6 +3,7 @@ class Message < ApplicationRecord
 
   belongs_to :room, touch: true
   belongs_to :creator, class_name: "User", default: -> { Current.user }
+  belongs_to :pinned_by, class_name: "User", optional: true
 
   has_many :boosts, dependent: :destroy
 
@@ -12,6 +13,7 @@ class Message < ApplicationRecord
   after_create_commit -> { room.receive(self) }
 
   scope :ordered, -> { order(:created_at) }
+  scope :pinned,  -> { where.not(pinned_at: nil).order(pinned_at: :desc) }
   scope :with_creator, -> { preload(creator: :avatar_attachment) }
   scope :with_attachment_details, -> {
     with_rich_text_body_and_embeds
@@ -22,6 +24,18 @@ class Message < ApplicationRecord
 
   def plain_text_body
     body.to_plain_text.presence || attachment&.filename&.to_s || ""
+  end
+
+  def pinned?
+    pinned_at.present?
+  end
+
+  def pin(by:)
+    update!(pinned_at: Time.current, pinned_by: by)
+  end
+
+  def unpin
+    update!(pinned_at: nil, pinned_by: nil)
   end
 
   def to_key

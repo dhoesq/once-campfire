@@ -5,6 +5,24 @@ module RoomsHelper
     }.merge(attributes.delete(:data) || {}), &
   end
 
+  # Star toggle affordance rendered inside a sidebar room link. It is a span
+  # (valid inside an <a>) wired to the star Stimulus controller, which
+  # intercepts the click so the row link still navigates on the rest of the row.
+  def room_star_toggle(room, starred:)
+    tag.span class: [ "room__star btn", "room__star--on": starred ],
+        role: "button", tabindex: 0,
+        title: starred ? "Unstar" : "Star",
+        aria: { label: starred ? "Unstar" : "Star", pressed: starred.to_s },
+        data: {
+          controller: "star",
+          star_url_value: room_star_path(room),
+          star_starred_value: starred.to_s,
+          action: "click->star#toggle keydown.enter->star#toggle"
+        } do
+      image_tag("star.svg", size: 16, aria: { hidden: "true" }, class: "colorize--black")
+    end
+  end
+
   def link_to_edit_room(room, &)
     link_to \
       [ :edit, @room ],

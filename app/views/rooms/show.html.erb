@@ -12,6 +12,8 @@
 <%= message_area_tag(@room) do %>
   <%= render "messages/template" %>
 
+  <%= render "rooms/pins", room: @room %>
+
   <%= messages_tag(@room) do %>
     <%= render "rooms/show/invitation", room: @room %>
     <%= render partial: "messages/message", collection: @messages, cached: true %>

@@ -1,0 +1,21 @@
+<% pinned_messages = room.messages.pinned.with_creator %>
+
+<div id="<%= dom_id(room, :pins) %>" class="pins"<%= " hidden" if pinned_messages.empty? %>>
+  <% pinned_messages.each do |message| %>
+    <div class="pins__item flex align-center gap" id="<%= dom_id(message, :pin) %>">
+      <span class="pins__icon flex-item-no-shrink" aria-hidden="true">
+        <%= image_tag "pin.svg", size: 16, class: "colorize--black" %>
+      </span>
+
+      <%= link_to room_at_message_path(room, message), target: "_top", class: "pins__link flex align-center gap min-width flex-item-grow", title: "Jump to message" do %>
+        <span class="pins__author txt-small flex-item-no-shrink"><strong><%= message.creator.name %></strong></span>
+        <span class="pins__snippet txt-small overflow-ellipsis txt-nowrap"><%= truncate(message.plain_text_body, length: 120) %></span>
+      <% end %>
+
+      <%= button_to message_pin_path(message), method: :delete,
+            class: "btn pins__unpin flex-item-no-shrink", title: "Unpin", aria: { label: "Unpin message" } do %>
+        <%= image_tag "cancel.svg", size: 16, class: "colorize--black", aria: { hidden: "true" } %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -13,6 +13,7 @@ class Membership < ApplicationRecord
 
   scope :visible, -> { where.not(involvement: :invisible) }
   scope :unread,  -> { where.not(unread_at: nil) }
+  scope :starred, -> { where.not(starred_at: nil) }
 
   def read
     update!(unread_at: nil)
@@ -20,5 +21,17 @@ class Membership < ApplicationRecord
 
   def unread?
     unread_at.present?
+  end
+
+  def starred?
+    starred_at.present?
+  end
+
+  def star
+    update!(starred_at: Time.current)
+  end
+
+  def unstar
+    update!(starred_at: nil)
   end
 end

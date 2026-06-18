@@ -125,6 +125,76 @@ legend {
   inset: calc(var(--block-space) * 1.5) var(--inline-space) auto auto;
 }
 
+/* Lightweight modal (forward-message dialog) rendered into the #modal frame. */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--inline-space);
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 8, 8, 0.6);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.modal__panel {
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-bg);
+  border-radius: 12px;
+  inline-size: 42ch;
+  max-inline-size: calc(100dvw - var(--inline-space) * 2);
+  max-block-size: 80dvh;
+  overflow-y: auto;
+  padding: var(--block-space) var(--inline-space);
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-space);
+}
+
+.modal__header {
+  --column-gap: 0.5em;
+  justify-content: space-between;
+}
+
+.modal__close {
+  --btn-size: auto;
+  --btn-padding: 0.2em;
+  --btn-background: transparent;
+  --btn-border-color: transparent;
+}
+
+.modal__hint {
+  margin: 0;
+}
+
+.forward__room {
+  --btn-border-radius: 8px;
+  --btn-background: transparent;
+  --btn-border-color: transparent;
+  --column-gap: 0.5em;
+  color: var(--color-text);
+
+  @media (any-hover: hover) {
+    &:where(:not(:active):hover) {
+      --btn-background: var(--color-message-bg);
+    }
+  }
+
+  .room__hash {
+    color: var(--color-border-darker);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+}
+
 /* Misc */
 menu {
   outline: 0;
