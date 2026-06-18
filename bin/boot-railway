@@ -1,0 +1,26 @@
+#!/bin/bash -e
+#
+# Railway entrypoint: runs the web server AND Resque workers in one container.
+#
+# Why one container: app state is SQLite on the mounted volume plus Active Storage
+# files, so the workers must share the same filesystem as web (they can't be a
+# separate Railway service). They also share REDIS_URL (see config/initializers/
+# resque.rb) for the job queue.
+#
+# Set this as the service's Custom Start Command:  bash bin/boot-railway
+#
+cd /rails
+
+# Prepare the SQLite DB (idempotent) before anything else boots.
+rm -f tmp/pids/server.pid
+./bin/rails db:prepare
+
+# Start Resque workers in the background. Pool size is RESQUE_WORKERS (default 2,
+# see config/resque-pool.yml). If this process exits it is not auto-restarted
+# until the next deploy; resque-pool supervises its own worker children, so that
+# is rare.
+FORK_PER_JOB=false INTERVAL=0.1 bundle exec resque-pool &
+
+# Run the web server in the foreground as the controlling process. If it exits,
+# the container exits and Railway restarts the whole thing.
+exec ./bin/rails server -b 0.0.0.0 -p "${PORT:-8080}"

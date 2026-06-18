@@ -1,1 +1,4 @@
-default: <%= (Concurrent.processor_count * 0.5).ceil %>
+# Workers watch all queues ("*"). Count is capped via RESQUE_WORKERS (default 2)
+# because Concurrent.processor_count reports the Railway host's core count, which
+# would otherwise spawn many full Rails worker processes and exhaust container memory.
+"*": <%= ENV.fetch("RESQUE_WORKERS", 2).to_i %>
