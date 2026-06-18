@@ -9,7 +9,7 @@ module RoomsHelper
   # (valid inside an <a>) wired to the star Stimulus controller, which
   # intercepts the click so the row link still navigates on the rest of the row.
   def room_star_toggle(room, starred:)
-    tag.span class: [ "room__star btn", "room__star--on": starred ],
+    tag.span class: [ "room__star", "room__star--on": starred ],
         role: "button", tabindex: 0,
         title: starred ? "Unstar" : "Star",
         aria: { label: starred ? "Unstar" : "Star", pressed: starred.to_s },

@@ -268,6 +268,8 @@
   --column-gap: 0.3ch;
 
   color: var(--color-text);
+  flex-grow: 1;
+  min-inline-size: 0;
 
   .unread & {
     font-weight: 700;
@@ -535,6 +537,16 @@
   margin-inline-start: auto;
   opacity: 0;
   padding: 0.15em;
+
+  /* No button chrome: bare icon, no hover ring or focus box. */
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+
+  &:focus-visible {
+    opacity: 1;
+    outline: none;
+  }
 
   img {
     block-size: 16px;
