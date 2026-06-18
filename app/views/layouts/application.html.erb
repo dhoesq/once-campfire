@@ -62,8 +62,15 @@
       </footer>
     </main>
 
-    <aside id="sidebar" data-controller="toggle-class" data-toggle-class-toggle-class="open">
+    <aside id="sidebar" data-controller="toggle-class sidebar-resize" data-toggle-class-toggle-class="open">
       <%= yield :sidebar %>
+
+      <div class="sidebar__resize-handle"
+           data-sidebar-resize-target="handle"
+           data-action="pointerdown->sidebar-resize#start"
+           role="separator"
+           aria-orientation="vertical"
+           aria-label="Resize sidebar"></div>
     </aside>
 
     <%= render "layouts/lightbox" %>

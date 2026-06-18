@@ -18,6 +18,9 @@
   --color-negative: oklch(var(--lch-red));
   --color-positive: oklch(var(--lch-green));
   --color-bg: oklch(var(--lch-white));
+  /* Sidebar surface: a subtle step off --color-bg so the two columns read as
+     distinct but cohesive. LIGHT = slightly deeper warm neutral than the main. */
+  --color-sidebar-bg: oklch(93.5% 0.006 95);
   --color-message-bg: oklch(var(--lch-gray));
   --color-text: oklch(var(--lch-black));
   --color-text-reversed: oklch(var(--lch-white));
@@ -48,6 +51,9 @@
     --lch-red: 73.8% 0.184 29.18;
     --lch-green: 75% 0.21 141.89;
     --lch-always-black: 0% 0 0;    /* keep shadows true black on dark */
+
+    /* DARK: sidebar slightly lighter than the near-black main column. */
+    --color-sidebar-bg: oklch(18% 0 0);
 
     /* accent + own-message tint stay the same hue in dark */
     --color-accent: #0CC0DF;

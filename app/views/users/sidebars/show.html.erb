@@ -43,14 +43,16 @@
       <div class="directs flex flex-column gap">
         <div class="sidebar__section-label">Direct Messages</div>
 
-        <%= link_to new_rooms_direct_path, class: "direct direct__new align-center gap", data: { turbo_frame: "_self" } do %>
-          <span class="avatar avatar--icon">
-            <%= image_tag "messages-add.svg", size: 20, aria: { hidden: "true" }, class: "colorize--black" %>
+        <%= link_to new_rooms_direct_path, class: "direct direct--row direct__new align-center gap", data: { turbo_frame: "_self" } do %>
+          <span class="direct__avatar flex-item-no-shrink">
+            <span class="avatar avatar--icon">
+              <%= image_tag "messages-add.svg", size: 20, aria: { hidden: "true" }, class: "colorize--black" %>
+            </span>
           </span>
 
-          <span class="direct__author flex max-width min-width">
+          <span class="direct__author flex align-center min-width max-width txt-small">
             <span class="for-screen-reader">New</span>
-            <span class="txt-small overflow-ellipsis">New message</span>
+            <span class="txt-nowrap overflow-ellipsis">New message</span>
           </span>
         <% end %>
 
