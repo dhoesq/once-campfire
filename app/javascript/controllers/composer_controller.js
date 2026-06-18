@@ -6,7 +6,7 @@ import { escapeHTML } from "helpers/dom_helpers"
 export default class extends Controller {
   static classes = ["toolbar"]
   static targets = [ "clientid", "fields", "fileList", "text" ]
-  static values = { roomId: Number }
+  static values = { roomId: Number, roomName: String }
   static outlets = [ "messages" ]
 
   #files = []
@@ -193,6 +193,25 @@ export default class extends Controller {
     return `campfire:draft:${this.roomIdValue}`
   }
 
+  // Parses a stored draft value into { name, body }. Backward-compatible: an
+  // older plain-string value (or anything that fails JSON.parse / isn't the
+  // object shape) is treated as a bare body so legacy drafts still restore.
+  #parseDraft(raw) {
+    if (raw == null) return null
+
+    try {
+      const parsed = JSON.parse(raw)
+      if (parsed && typeof parsed === "object" && typeof parsed.body === "string") {
+        return { name: typeof parsed.name === "string" ? parsed.name : null, body: parsed.body }
+      }
+      // JSON parsed but not our shape (e.g. a number, array, or a JSON string).
+      return { name: null, body: String(raw) }
+    } catch (_error) {
+      // Not JSON at all: old format stored the raw HTML body as a plain string.
+      return { name: null, body: raw }
+    }
+  }
+
   #writeDraft() {
     if (!this.hasRoomIdValue) return
 
@@ -200,7 +219,12 @@ export default class extends Controller {
 
     try {
       if (html && html.trim().length > 0) {
-        window.localStorage.setItem(this.#draftKey, html)
+        const record = {
+          name: this.hasRoomNameValue ? this.roomNameValue : null,
+          body: html,
+          updatedAt: Date.now()
+        }
+        window.localStorage.setItem(this.#draftKey, JSON.stringify(record))
       } else {
         window.localStorage.removeItem(this.#draftKey)
       }
@@ -208,21 +232,26 @@ export default class extends Controller {
       // localStorage may be unavailable (private mode, quota). Drafts are a
       // convenience, never required, so fail silently.
     }
+
+    this.#notifyDraftsChanged()
   }
 
   #restoreDraft() {
     if (!this.hasRoomIdValue) return
 
-    let html = null
+    let raw = null
     try {
-      html = window.localStorage.getItem(this.#draftKey)
+      raw = window.localStorage.getItem(this.#draftKey)
     } catch (_error) {
       return
     }
 
+    const draft = this.#parseDraft(raw)
+    const html = draft?.body
+
     // Only restore when there is a draft and the editor is empty, so we never
     // clobber content already present (e.g. a forwarded/quoted reply).
-    if (html && this.textTarget.value.trim().length === 0) {
+    if (html && html.trim().length > 0 && this.textTarget.value.trim().length === 0) {
       this.textTarget.value = html
     }
   }
@@ -239,6 +268,18 @@ export default class extends Controller {
       window.localStorage.removeItem(this.#draftKey)
     } catch (_error) {
       // Ignore; see #writeDraft.
+    }
+
+    this.#notifyDraftsChanged()
+  }
+
+  // Lets the sidebar drafts list refresh without a page reload. Fired whenever a
+  // draft is written or cleared. Best-effort: never let it break the composer.
+  #notifyDraftsChanged() {
+    try {
+      window.dispatchEvent(new CustomEvent("campfire:drafts-changed"))
+    } catch (_error) {
+      // Ignore: drafts list is a convenience, not required.
     }
   }
 

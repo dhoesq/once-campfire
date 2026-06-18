@@ -64,6 +64,55 @@
   text-transform: uppercase;
 }
 
+/* Mark-all-read: subtle, muted text button sitting between the search field and
+   the first rooms section. Not a loud button; a quiet utility action. The
+   button_to wraps it in a form; the form is full-width and left-aligned. */
+.sidebar__mark-all-read {
+  inline-size: 100%;
+  margin-block-end: calc(var(--block-space) * -0.5);
+}
+
+.sidebar__mark-all-read-btn {
+  --btn-background: transparent;
+  --btn-border-color: transparent;
+  --btn-color: var(--color-border-darker);
+
+  color: var(--color-border-darker);
+  font-weight: 500;
+  inline-size: 100%;
+  justify-content: start;
+  padding-inline: 0.4em;
+
+  @media (any-hover: hover) {
+    &:where(:not(:active):hover) {
+      --btn-background: var(--color-message-bg);
+      --btn-color: var(--color-text);
+
+      color: var(--color-text);
+    }
+  }
+}
+
+/* Drafts section: rows reuse the room--row chrome for visual consistency. Each
+   row stacks the room name over a muted one-line snippet of the unsent text. */
+.draft-row {
+  flex-wrap: wrap;
+  line-height: 1.2;
+
+  .room__name {
+    flex-basis: 100%;
+    font-weight: 600;
+  }
+}
+
+.draft-row__snippet {
+  color: var(--color-border-darker);
+  flex-basis: 100%;
+  font-size: 0.78rem;
+  font-weight: 400;
+  min-inline-size: 0;
+}
+
 .sidebar__tools {
   background-color: var(--color-sidebar-bg);
   border-block-start: 1px solid var(--color-border-dark);
@@ -244,13 +293,17 @@
 .direct__author {
   --column-gap: 0.3ch;
 
-  color: var(--color-text);
+  /* Read DM rows recede (lighter, normal weight); unread rows pop to full
+     strength + heavy weight, matching the room rows above. */
+  color: var(--color-border-darker);
   flex-grow: 1;
+  font-weight: 400;
   min-inline-size: 0;
 
   /* Unread DM rows bold the name; the numeric count pill (shared with room
      rows, styled at the bottom of this file) carries the unread indication. */
   .unread & {
+    color: var(--color-text);
     font-weight: 700;
   }
 }
@@ -309,6 +362,12 @@
   text-align: start;
   padding: 0.4em 0.6em;
 
+  /* Read (default) rows recede: lighter color + normal weight so unread rows
+     stand out at a glance, Slack-style. */
+  --btn-color: var(--color-border-darker);
+  color: var(--color-border-darker);
+  font-weight: 400;
+
   .room__hash {
     color: var(--color-border-darker);
     flex-shrink: 0;
@@ -321,10 +380,16 @@
     text-align: start;
   }
 
+  /* Unread rows pop: full-strength text + heavy weight. */
   &.unread {
     --btn-color: var(--color-text);
 
-    font-weight: 600;
+    color: var(--color-text);
+    font-weight: 700;
+
+    .room__name {
+      color: var(--color-text);
+    }
 
     .room__hash {
       color: var(--color-accent);
@@ -364,7 +429,12 @@
   --btn-color: #080808;
   --hover-filter: none;
 
+  color: #080808;
   font-weight: 600;
+
+  .room__name {
+    color: #080808;
+  }
 
   .room__hash {
     color: rgba(8, 8, 8, 0.55);
@@ -374,6 +444,19 @@
     &:where(:not(:active):hover) {
       --btn-background: var(--color-accent);
     }
+  }
+}
+
+/* Active DM: same filled cyan pill as active rooms. Direct rows aren't `.btn`,
+   so set the background directly rather than via --btn-background. Keeps the
+   open conversation clearly highlighted and legible against the muted read rows. */
+.direct--row[aria-current],
+.direct--row.room--active {
+  background-color: var(--color-accent);
+  border-radius: 8px;
+
+  .direct__author {
+    color: #080808;
   }
 }
 

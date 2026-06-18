@@ -10,15 +10,6 @@
     <span class="sidebar__brand-mark" aria-hidden="true">🔥</span>
     <span class="sidebar__brand-name">Campfire</span>
 
-    <%= button_to reads_path, method: :patch,
-          form: { class: "sidebar__mark-all-read flex-item-no-shrink" },
-          class: "btn btn--borderless txt-small sidebar__mark-all-read-btn",
-          aria: { label: "Mark all rooms read" },
-          title: "Mark all read" do %>
-      <%= image_tag "check.svg", size: 16, aria: { hidden: "true" }, class: "colorize--black" %>
-      <span class="for-screen-reader">Mark all read</span>
-    <% end %>
-
     <button class="btn sidebar__toggle" data-action="toggle-class#toggle">
       <%= image_tag "menu.svg", size: 20, aria: { hidden: "true" } %>
       <span class="for-screen-reader">Open menu</span>
@@ -29,6 +20,22 @@
     <%= image_tag "search.svg", size: 18, aria: { hidden: "true" }, class: "colorize--black" %>
     <span class="txt-small overflow-ellipsis">Search</span>
   <% end %>
+
+  <%= button_to reads_path, method: :patch,
+        form: { class: "sidebar__mark-all-read" },
+        class: "btn btn--borderless txt-small sidebar__mark-all-read-btn",
+        aria: { label: "Mark all rooms read" },
+        title: "Mark all read" do %>
+    <span class="overflow-ellipsis">Mark All Read</span>
+  <% end %>
+
+  <div class="drafts rooms position-relative flex flex-column gap"
+      data-controller="drafts-list"
+      data-drafts-list-target="section"
+      hidden>
+    <div class="sidebar__section-label">Drafts</div>
+    <div data-drafts-list-target="list" contents></div>
+  </div>
 
   <div id="starred_rooms_section" class="rooms position-relative flex flex-column gap"<%= " hidden" if @starred_memberships.blank? %>>
     <div class="sidebar__section-label">Starred</div>
