@@ -184,6 +184,34 @@
   }
 }
 
+/* "New messages" divider: a thin accent-tinted rule with a centered label,
+   injected once before the first unread message (see messages/_list.html.erb).
+   It is a direct grid child of .messages (one column), so it spans full width.
+   It carries no .message class, so the JS formatter and paginator skip it. */
+.messages__new-divider {
+  align-items: center;
+  color: var(--color-accent);
+  display: grid;
+  font-size: 0.72rem;
+  font-weight: 700;
+  gap: 1ch;
+  grid-template-columns: 1fr auto 1fr;
+  letter-spacing: 0.08em;
+  padding-inline: calc(var(--inline-space) + 1vw);
+  text-transform: uppercase;
+
+  &::before,
+  &::after {
+    border-top: 1px solid var(--color-accent);
+    content: "";
+    opacity: 0.5;
+  }
+}
+
+.messages__new-divider-label {
+  white-space: nowrap;
+}
+
 .message__avatar {
   --avatar-border-size: 1px;
   --avatar-size: 3.5ch;

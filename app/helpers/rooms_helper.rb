@@ -5,6 +5,16 @@ module RoomsHelper
     }.merge(attributes.delete(:data) || {}), &
   end
 
+  # Renders the unread-count text shown inside a sidebar row's unread badge.
+  # Counts above 99 are capped as "99+". A nil/zero count renders empty so the
+  # badge collapses (the badge element is hidden via CSS unless the row is
+  # .unread, but we keep the number out when there's nothing to show).
+  def unread_count_label(count)
+    return "" if count.to_i <= 0
+
+    count > 99 ? "99+" : count.to_s
+  end
+
   # Star toggle affordance rendered inside a sidebar room link. It is a span
   # (valid inside an <a>) wired to the star Stimulus controller, which
   # intercepts the click so the row link still navigates on the rest of the row.

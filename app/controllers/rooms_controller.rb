@@ -8,6 +8,10 @@ class RoomsController < ApplicationController
   end
 
   def show
+    # The viewer's membership carries unread_at, which the message list uses to
+    # place the "New messages" divider. Read here at open time, before the
+    # presence subscription marks the room read (unread_at: nil).
+    @membership = Current.user.memberships.find_by(room_id: @room.id)
     @messages = find_messages
   end
 

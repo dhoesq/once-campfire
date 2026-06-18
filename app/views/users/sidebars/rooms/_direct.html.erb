@@ -32,6 +32,7 @@
       </span>
     </span>
 
+    <span class="room__unread-badge"><%= unread_count_label(@unread_counts[membership.room_id]) %></span>
     <%= room_star_toggle membership.room, starred: membership.starred? %>
   <% end %>
 <% end %>

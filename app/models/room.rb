@@ -66,7 +66,17 @@ class Room < ApplicationRecord
 
   private
     def unread_memberships(message)
-      memberships.visible.disconnected.where.not(user: message.creator).update_all(unread_at: message.created_at, updated_at: Time.current)
+      affected = memberships.visible.disconnected.where.not(user: message.creator)
+      # Capture before update_all (which returns a row count, not records) so we
+      # can refresh exactly the users whose unread count just changed.
+      user_ids = affected.pluck(:user_id)
+      affected.update_all(unread_at: message.created_at, updated_at: Time.current)
+
+      refresh_sidebars_later(user_ids)
+    end
+
+    def refresh_sidebars_later(user_ids)
+      Room::RefreshSidebarsJob.perform_later(user_ids) if user_ids.any?
     end
 
     def push_later(message)

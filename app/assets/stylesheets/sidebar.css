@@ -233,29 +233,6 @@
     block-size: 2.4ch;
     inline-size: 2.4ch;
   }
-
-  /* Presence dot hook: shown only when the row carries the `online` class.
-     No live data source wires this yet, so it stays hidden by default. */
-  &::after {
-    --size: 0.66em;
-
-    aspect-ratio: 1;
-    background-color: var(--color-positive);
-    block-size: var(--size);
-    border: 2px solid var(--color-bg);
-    border-radius: 50%;
-    content: "";
-    display: none;
-    inline-size: var(--size);
-    inset: auto -2px -2px auto;
-    position: absolute;
-  }
-
-  .online & {
-    &::after {
-      display: block;
-    }
-  }
 }
 
 .direct__new {
@@ -271,21 +248,10 @@
   flex-grow: 1;
   min-inline-size: 0;
 
+  /* Unread DM rows bold the name; the numeric count pill (shared with room
+     rows, styled at the bottom of this file) carries the unread indication. */
   .unread & {
     font-weight: 700;
-
-    &::after {
-      --size: 0.5em;
-
-      aspect-ratio: 1;
-      background-color: var(--color-accent);
-      block-size: var(--size);
-      border-radius: 50%;
-      content: "";
-      flex-shrink: 0;
-      inline-size: var(--size);
-      margin-inline-start: 0.5ch;
-    }
   }
 }
 
@@ -355,10 +321,6 @@
     text-align: start;
   }
 
-  .room__unread-badge {
-    display: none;
-  }
-
   &.unread {
     --btn-color: var(--color-text);
 
@@ -367,18 +329,32 @@
     .room__hash {
       color: var(--color-accent);
     }
-
-    .room__unread-badge {
-      aspect-ratio: 1;
-      background-color: var(--color-negative);
-      block-size: 0.6em;
-      border-radius: 50%;
-      display: block;
-      flex-shrink: 0;
-      inline-size: 0.6em;
-      margin-inline-start: auto;
-    }
   }
+}
+
+/* Numeric unread-count pill. Shared by room rows and DM rows. Hidden unless the
+   row carries .unread, so a read row never shows a stale pill. Right-aligned via
+   margin-inline-start:auto; the star sits just after it (see .room__star rule).
+   Replaces the former red dot on rooms and the accent dot on the DM author. */
+.room__unread-badge {
+  display: none;
+}
+
+.room--row.unread .room__unread-badge,
+.direct--row.unread .room__unread-badge {
+  align-items: center;
+  background-color: var(--color-negative);
+  border-radius: 1em;
+  color: var(--color-text-reversed);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  justify-content: center;
+  line-height: 1;
+  margin-inline-start: auto;
+  min-inline-size: 1.5em;
+  padding: 0.2em 0.5em;
 }
 
 /* Active room: filled cyan pill with dark text (used in sidebar list) */

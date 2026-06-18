@@ -1,0 +1,27 @@
+<%#
+  Renders a page of messages and, when this page contains the first unread
+  message for the viewer, injects a single "New messages" divider immediately
+  before it. The divider lives OUTSIDE the per-message `cache message` fragment
+  (which is shared across users) so it never pollutes another user's cache.
+
+  Inputs:
+    messages   - the ordered array of Message records for this page
+    unread_at  - the viewer's membership.unread_at (nil when the room is read)
+
+  Duplication safety: the divider is only emitted before the first message whose
+  created_at >= unread_at, and that boundary message exists in exactly one page,
+  so across paginated before/after fetches the divider renders at most once.
+
+  Pagination safety: the divider carries no data-message-id, so the paginator's
+  IntersectionObserver callback ignores it. We also never emit it as the first
+  rendered element (only when a preceding message exists in this page), so it can
+  never become the container's first/last child and stall load-older/load-newer.
+%>
+<% divider_rendered = false %>
+<% messages.each_with_index do |message, index| %>
+  <% if !divider_rendered && index.positive? && unread_at.present? && message.created_at >= unread_at %>
+    <%= render "messages/new_messages_divider" %>
+    <% divider_rendered = true %>
+  <% end %>
+  <%= render "messages/message", message: message %>
+<% end %>

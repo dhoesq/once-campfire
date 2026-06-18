@@ -1,1 +1,1 @@
-<%= render partial: "messages/message", collection: @messages, cached: true %>
+<%= render "messages/list", messages: @messages, unread_at: @membership&.unread_at %>
