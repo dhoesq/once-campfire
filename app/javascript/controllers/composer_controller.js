@@ -10,11 +10,34 @@ export default class extends Controller {
   static outlets = [ "messages" ]
 
   #files = []
+  #draftSaveTimeout = null
 
   connect() {
+    this.#restoreDraft()
+
     if (!this.#usingTouchDevice) {
       onNextEventLoopTick(() => this.textTarget.focus())
     }
+  }
+
+  disconnect() {
+    // Flush any pending debounced save so a fast room-switch never drops text.
+    if (this.#draftSaveTimeout) {
+      clearTimeout(this.#draftSaveTimeout)
+      this.#draftSaveTimeout = null
+      this.#writeDraft()
+    }
+  }
+
+  // Wired from the editor's trix-change action. Lightly debounced so we are not
+  // touching localStorage on every keystroke. Persists text body only; file
+  // attachments are intentionally not drafted.
+  draftSave() {
+    if (this.#draftSaveTimeout) clearTimeout(this.#draftSaveTimeout)
+    this.#draftSaveTimeout = setTimeout(() => {
+      this.#draftSaveTimeout = null
+      this.#writeDraft()
+    }, 300)
   }
 
   submit(event) {
@@ -159,6 +182,64 @@ export default class extends Controller {
 
   #reset() {
     this.textTarget.value = ""
+    // A sent message must never linger as a draft, so clear it at the exact
+    // point the editor is cleared after a successful submit.
+    this.#clearDraft()
+  }
+
+  // --- Per-room drafts (client-side, localStorage; text body only) -----------
+
+  get #draftKey() {
+    return `campfire:draft:${this.roomIdValue}`
+  }
+
+  #writeDraft() {
+    if (!this.hasRoomIdValue) return
+
+    const html = this.textTarget.value
+
+    try {
+      if (html && html.trim().length > 0) {
+        window.localStorage.setItem(this.#draftKey, html)
+      } else {
+        window.localStorage.removeItem(this.#draftKey)
+      }
+    } catch (_error) {
+      // localStorage may be unavailable (private mode, quota). Drafts are a
+      // convenience, never required, so fail silently.
+    }
+  }
+
+  #restoreDraft() {
+    if (!this.hasRoomIdValue) return
+
+    let html = null
+    try {
+      html = window.localStorage.getItem(this.#draftKey)
+    } catch (_error) {
+      return
+    }
+
+    // Only restore when there is a draft and the editor is empty, so we never
+    // clobber content already present (e.g. a forwarded/quoted reply).
+    if (html && this.textTarget.value.trim().length === 0) {
+      this.textTarget.value = html
+    }
+  }
+
+  #clearDraft() {
+    if (this.#draftSaveTimeout) {
+      clearTimeout(this.#draftSaveTimeout)
+      this.#draftSaveTimeout = null
+    }
+
+    if (!this.hasRoomIdValue) return
+
+    try {
+      window.localStorage.removeItem(this.#draftKey)
+    } catch (_error) {
+      // Ignore; see #writeDraft.
+    }
   }
 
   #updateFileList() {

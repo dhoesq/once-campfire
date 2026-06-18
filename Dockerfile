@@ -37,7 +37,7 @@ RUN bundle install && \
 
 # Cache-bust: bump this value to force a fresh source copy + asset precompile.
 # (Railway was reusing stale cached layers, shipping pre-restyle code/assets.)
-ARG CACHEBUST=20260618-8
+ARG CACHEBUST=20260618-9
 RUN echo "cachebust ${CACHEBUST}"
 
 # Copy application code

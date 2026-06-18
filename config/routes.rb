@@ -95,6 +95,10 @@ Rails.application.routes.draw do
 
   resource :unfurl_link, only: :create
 
+  # Mark all rooms read for the current user (distinct from the per-room
+  # rooms/:room_id/read resource above).
+  resource :reads, only: :update
+
   get "webmanifest"    => "pwa#manifest"
   get "service-worker" => "pwa#service_worker"
 

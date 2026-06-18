@@ -10,6 +10,15 @@
     <span class="sidebar__brand-mark" aria-hidden="true">🔥</span>
     <span class="sidebar__brand-name">Campfire</span>
 
+    <%= button_to reads_path, method: :patch,
+          form: { class: "sidebar__mark-all-read flex-item-no-shrink" },
+          class: "btn btn--borderless txt-small sidebar__mark-all-read-btn",
+          aria: { label: "Mark all rooms read" },
+          title: "Mark all read" do %>
+      <%= image_tag "check.svg", size: 16, aria: { hidden: "true" }, class: "colorize--black" %>
+      <span class="for-screen-reader">Mark all read</span>
+    <% end %>
+
     <button class="btn sidebar__toggle" data-action="toggle-class#toggle">
       <%= image_tag "menu.svg", size: 20, aria: { hidden: "true" } %>
       <span class="for-screen-reader">Open menu</span>
