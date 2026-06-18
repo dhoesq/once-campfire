@@ -68,7 +68,7 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   # Cache in memory for now
-  config.cache_store = :redis_cache_store
+  config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_URL", "redis://localhost:6379") }
 
   # Assets are cacheable
   config.public_file_server.headers = {
