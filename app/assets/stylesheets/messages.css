@@ -76,12 +76,9 @@
   grid-auto-rows: min-content;
   overflow-y: auto;
   overscroll-behavior: contain;
+  padding-block-start: var(--navbar-height);
   position: relative;
   row-gap: var(--message-space);
-
-  @media (max-width: 100ch) {
-    padding-block-start: var(--navbar-height);
-  }
 }
 
 .message {

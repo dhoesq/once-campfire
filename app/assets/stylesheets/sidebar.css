@@ -1,115 +1,136 @@
 /* Sidebar */
 :root {
-  --sidebar-inline-space: max(calc(var(--inline-space) * 1.5), 1vw);
+  --sidebar-inline-space: calc(var(--inline-space) * 1.25);
   --sidebar-tools-height: calc(var(--block-space) + var(--btn-size) + (var(--block-space) * 2));
 }
 
 .sidebar__container {
   block-size: 100dvh;
   max-block-size: 100dvh;
-  padding-block-end: var(--sidebar-tools-height);
+  display: flex;
+  flex-direction: column;
+  gap: var(--block-space);
+  padding-block: var(--block-space) var(--sidebar-tools-height);
+  padding-inline: var(--sidebar-inline-space);
+}
+
+/* Brand wordmark */
+.sidebar__brand {
+  --column-gap: 0.4em;
+
+  min-block-size: var(--btn-size);
+  padding-inline-start: 0.2em;
+}
+
+.sidebar__brand-mark {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.sidebar__brand-name {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+
+/* Search field */
+.sidebar__search {
+  --btn-border-radius: 8px;
+  --btn-background: var(--color-message-bg);
+  --btn-border-color: var(--color-border-dark);
+  --btn-color: var(--color-border-darker);
+
+  justify-content: start;
+  font-weight: 400;
+  inline-size: 100%;
+
+  @media (any-hover: hover) {
+    &:where(:not(:active):hover) {
+      --btn-background: var(--color-border);
+    }
+  }
+}
+
+/* Section labels */
+.sidebar__section-label {
+  color: var(--color-border-darker);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-block-end: 0.1em;
+  padding-inline-start: 0.4em;
+  text-transform: uppercase;
 }
 
 .sidebar__tools {
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background-color: var(--color-bg);
+  border-block-start: 1px solid var(--color-border-dark);
   inset: auto 0 0 0;
-  padding-block: calc(var(--block-space) * 1.5);
+  padding-block: var(--block-space);
   padding-inline: var(--sidebar-inline-space);
   position: fixed;
 
   @media (min-width: 100ch) {
-    inline-size: calc(var(--sidebar-width));
-    inset-inline-start: auto;
+    inline-size: var(--sidebar-width);
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+  }
+
+  @media (max-width: 100ch) {
+    inline-size: min(82vw, 320px);
   }
 }
 
 .sidebar__toggle {
-  inset-block-start: var(--block-space-half);
-  inset-inline-start: calc((var(--btn-size) + max(var(--inline-space), 1vw)) * -1);
-  position: absolute;
-  transition:
-    inset-inline-start 300ms ease,
-    border-color 300ms ease,
-    background-color 300ms ease;
-  z-index: 5;
-
-  #sidebar:where(:not(.open):has(.unread)) & {
-    &::after {
-      --size: 1em;
-
-      aspect-ratio: 1;
-      background-color: var(--color-negative);
-      block-size: var(--size);
-      border-radius: calc(var(--size) * 2);
-      content: "";
-      flex-shrink: 0;
-      inline-size: var(--size);
-      inset-block-start: calc(var(--size) / -4);
-      inset-inline-end: calc(var(--size) / -4);
-      position: absolute;
-    }
-  }
+  margin-inline-start: auto;
+  z-index: 6;
 
   @media (min-width: 100ch) {
     display: none;
-    inset-block-start: var(--block-space);
   }
 
-  .open & {
-    inset-block-start: var(--block-space);
+  /* On small screens the sidebar slides off-canvas, so keep the toggle pinned
+     to the top-left of the viewport where it is always tappable. It remains a
+     DOM child of #sidebar, so toggle-class#toggle still resolves. */
+  @media (max-width: 100ch) {
+    background-color: var(--color-bg);
+    inset: var(--block-space-half) auto auto var(--sidebar-inline-space);
+    position: fixed;
+    transition: inset-inline-start 300ms ease;
 
-    @media (max-width: 100ch) {
-      inset-inline-start: var(--sidebar-inline-space);
-
-      & img {
-        filter: invert(0);
-      }
-
-      @media (prefers-color-scheme: dark) {
-        & img {
-          filter: invert(100%);
-        }
-      }
+    .open & {
+      inset-inline-start: calc(min(82vw, 320px) - var(--btn-size) - var(--sidebar-inline-space));
     }
   }
 }
 
-/* Direct messsages */
+/* Unread indicator on the closed mobile toggle */
+#sidebar:where(:not(.open):has(.unread)) .sidebar__toggle::after {
+  --size: 0.85em;
+
+  aspect-ratio: 1;
+  background-color: var(--color-negative);
+  block-size: var(--size);
+  border: 2px solid var(--color-bg);
+  border-radius: 50%;
+  content: "";
+  inline-size: var(--size);
+  inset: -3px -3px auto auto;
+  position: absolute;
+
+  @media (min-width: 100ch) {
+    display: none;
+  }
+}
+
+/* Direct messages */
 .directs {
-  --btn-border-color: var(--color-border-darker);
-  --column-gap: calc(var(--inline-space) / 1.5);
+  --row-gap: 2px;
+  --column-gap: 0;
 
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  display: grid;
-  grid-auto-columns: minmax(auto, max-content);
-  grid-auto-flow: column;
-  inset: 0 0 auto 0;
-  justify-content: start;
-  overscroll-behavior: auto;
   margin-block-end: var(--block-space-half);
-  padding-block: var(--block-space) var(--block-space-half);
-  padding-inline: var(--sidebar-inline-space) calc(var(--sidebar-inline-space) + var(--column-gap));
-  position: sticky;
-  z-index: 3;
-
-  .open & {
-    @media (max-width: 100ch) {
-      -webkit-mask-image: linear-gradient(to left, oklch(0% 0 0 / 1) 85%, oklch(0% 0 0 / 0) 99%);
-      mask-image: linear-gradient(to left, oklch(0% 0 0 / 1) 85%, oklch(0% 0 0 / 0) 99%);
-      padding-inline-start: calc(var(--btn-size) + var(--sidebar-inline-space) + (var(--column-gap) * 2.5));
-    }
-  }
-
-  &.directs--new {
-    --column-gap: var(--inline-space);
-    --row-gap: 2px;
-
-    -webkit-mask-image: none;
-    mask-image: none;
-    padding-inline-end: var(--sidebar-inline-space);
-  }
 }
 
 .directs--edit  {
@@ -129,26 +150,29 @@
 }
 
 .direct {
-  border-radius: 0.3em;
+  border-radius: 8px;
   box-shadow: none;
   color: var(--color-text);
-  display: grid;
-  justify-items: center;
   position: relative;
   text-decoration: none;
+}
 
-  .avatar,
-  .avatar__group {
-    margin-inline: calc(var(--inline-space) / 1.5);
+/* Row layout: avatar + name (used in the left sidebar list) */
+.direct--row {
+  --column-gap: 0.6em;
 
-    .avatar {
-      margin-inline: 0;
-    }
-  }
+  display: flex;
+  inline-size: 100%;
+  justify-content: start;
+  padding: 0.35em 0.5em;
 
   @media (any-hover: hover) {
-    &:where(:not(:active):hover) .avatar:not(.avatar--icon) {
-      filter: brightness(0.7);
+    &:where(:not(:active):hover) {
+      background-color: var(--color-message-bg);
+
+      .avatar:not(.avatar--icon) {
+        filter: none;
+      }
     }
   }
 
@@ -158,36 +182,72 @@
   }
 }
 
-.direct__new {
-  margin-inline-end: var(--inline-space-half);
+.direct__avatar {
+  --avatar-size: 2.2ch;
+
+  display: inline-flex;
+  position: relative;
 
   .avatar {
-    margin-inline: 0;
+    --avatar-size: 2.2ch;
+  }
+
+  .avatar__group {
+    --avatar-size: 1.4ch;
+
+    block-size: 2.4ch;
+    inline-size: 2.4ch;
+  }
+
+  /* Presence dot hook: shown only when the row carries the `online` class.
+     No live data source wires this yet, so it stays hidden by default. */
+  &::after {
+    --size: 0.66em;
+
+    aspect-ratio: 1;
+    background-color: var(--color-positive);
+    block-size: var(--size);
+    border: 2px solid var(--color-bg);
+    border-radius: 50%;
+    content: "";
+    display: none;
+    inline-size: var(--size);
+    inset: auto -2px -2px auto;
+    position: absolute;
+  }
+
+  .online & {
+    &::after {
+      display: block;
+    }
+  }
+}
+
+.direct__new {
+  .avatar--icon {
+    --avatar-size: 2.2ch;
   }
 }
 
 .direct__author {
   --column-gap: 0.3ch;
 
-  margin-block-start: 0.1em;
+  color: var(--color-text);
 
   .unread & {
-    font-weight: 800;
-    position: relative;
+    font-weight: 700;
 
     &::after {
-      --size: 0.6em;
+      --size: 0.5em;
 
       aspect-ratio: 1;
-      background-color: var(--color-text);
+      background-color: var(--color-accent);
       block-size: var(--size);
-      border-radius: calc(var(--size) * 2);
+      border-radius: 50%;
       content: "";
       flex-shrink: 0;
       inline-size: var(--size);
-      position: absolute;
-      inset: 1.3em auto auto 50%;
-      transform: translate(-50%);
+      margin-inline-start: 0.5ch;
     }
   }
 }
@@ -195,25 +255,34 @@
 /* Rooms */
 .rooms {
   --column-gap: 0.5em;
-  --row-gap: 0.5em;
-
-  padding-inline: var(--sidebar-inline-space);
+  --row-gap: 2px;
 }
 
 .rooms__new-btn {
-  inset-block-end: calc((var(--sidebar-tools-height) * -1) + var(--block-space) * 1.5);
-  position: sticky;
-  z-index: 4;
+  --btn-background: transparent;
+  --btn-border-color: transparent;
+  --btn-color: var(--color-border-darker);
+
+  font-weight: 500;
+  justify-content: start;
+  margin-block-start: 0.2em;
+
+  @media (any-hover: hover) {
+    &:where(:not(:active):hover) {
+      --btn-background: var(--color-message-bg);
+    }
+  }
 }
 
 .room {
   --btn-border-radius: 8px;
+  --btn-border-color: transparent;
+  --btn-background: transparent;
 
-  background-color: var(--color-text-reversed);
   color: var(--color-text);
   font-weight: normal;
   justify-content: start;
-  margin-inline-end: auto;
+  inline-size: 100%;
   max-inline-size: 100%;
 
   @media (any-hover: hover) {
@@ -225,23 +294,77 @@
   .searches-list & {
     border-radius: 8px;
   }
+}
+
+/* Room rows in the sidebar list */
+.room--row {
+  --column-gap: 0.5em;
+
+  display: flex;
+  padding: 0.4em 0.6em;
+
+  .room__hash {
+    color: var(--color-border-darker);
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+
+  .room__name {
+    flex-grow: 1;
+    min-inline-size: 0;
+  }
+
+  .room__unread-badge {
+    display: none;
+  }
 
   &.unread {
-    --btn-border-color: var(--color-accent);
-    --hover-color: var(--color-accent);
+    --btn-color: var(--color-text);
 
     font-weight: 600;
 
-    &:not(:hover) {
-      box-shadow: 0 0 0 1px var(--color-accent);
+    .room__hash {
+      color: var(--color-accent);
+    }
+
+    .room__unread-badge {
+      aspect-ratio: 1;
+      background-color: var(--color-negative);
+      block-size: 0.6em;
+      border-radius: 50%;
+      display: block;
+      flex-shrink: 0;
+      inline-size: 0.6em;
+      margin-inline-start: auto;
     }
   }
 }
 
-.room--current {
-  --btn-border-radius: 8px;
+/* Active room: filled cyan pill with dark text (used in sidebar list) */
+.room--row[aria-current],
+.room--row.room--active {
   --btn-background: var(--color-accent);
   --btn-color: #080808;
+  --hover-filter: none;
+
+  font-weight: 600;
+
+  .room__hash {
+    color: rgba(8, 8, 8, 0.55);
+  }
+
+  @media (any-hover: hover) {
+    &:where(:not(:active):hover) {
+      --btn-background: var(--color-accent);
+    }
+  }
+}
+
+/* Current room title in the top bar */
+.room--current {
+  --btn-border-radius: 8px;
+  --btn-background: transparent;
+  --btn-color: var(--color-text);
   --btn-border-color: transparent;
   --hover-filter: none;
   --num-buttons: 1;
@@ -251,21 +374,25 @@
   .room__contents {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: 1.35rem;
+    font-size: 1.5rem;
     letter-spacing: 0.02em;
+
+    .room--current:not(.room--current-direct) &::before {
+      color: var(--color-border-darker);
+      content: "#";
+      margin-inline-end: 0.15em;
+    }
 
     .account-has-logo & {
       --num-buttons: 2;
     }
 
-    max-inline-size: calc(100dvw - (var(--btn-size) * var(--num-buttons)) - (var(--btn-size) + max(var(--inline-space), 1vw)) - ((var(--inline-space) + 1.8em) * 2) - var(--sidebar-width) - var(--inline-space) * var(--num-buttons));
+    max-inline-size: calc(100dvw - var(--sidebar-width) - (var(--btn-size) * 2) - var(--inline-space) * 6);
 
     @media (max-width: 100ch) {
       --num-buttons: 2;
 
-      .account-has-logo & {
-        --num-buttons: 3;
-      }
+      max-inline-size: calc(100dvw - (var(--btn-size) * 3) - var(--inline-space) * 4);
     }
   }
 }

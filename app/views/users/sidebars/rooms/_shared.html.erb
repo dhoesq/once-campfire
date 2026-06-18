@@ -1,5 +1,7 @@
 <%= link_to_room room,
       id: dom_id(room, :list), data: { sorted_list_name: room.name },
-      style: "--column-gap: 0.5em", class: [ "align-center gap room btn txt-nowrap", "unread": local_assigns[:unread] ] do %>
-  <span class="overflow-ellipsis"><%= room.name %></span>
+      style: "--column-gap: 0.5em", class: [ "align-center gap room room--row btn txt-nowrap", "unread": local_assigns[:unread] ] do %>
+  <span class="room__hash" aria-hidden="true">#</span>
+  <span class="room__name overflow-ellipsis"><%= room.name %></span>
+  <span class="room__unread-badge" aria-hidden="true"></span>
 <% end %>
