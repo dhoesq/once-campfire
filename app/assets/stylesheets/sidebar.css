@@ -55,6 +55,124 @@
   }
 }
 
+/* Inline (type-ahead) search: the Search row is now a real input. The form is
+   the positioning context for the absolutely-positioned results panel. */
+.sidebar__search-form {
+  position: relative;
+  display: block;
+}
+
+/* The row keeps the de-boxed nav look (transparent, hover tint via .sidebar__search
+   above); the input itself is borderless and transparent so it reads as a row,
+   not a boxed field. */
+.inline-search__row {
+  cursor: text;
+}
+
+.inline-search__icon {
+  flex: 0 0 auto;
+}
+
+.inline-search__input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+  outline: none;
+}
+
+.inline-search__input::placeholder {
+  color: var(--color-border-darker);
+  opacity: 1;
+}
+
+/* Hide the native search clear/decoration for a clean row. */
+.inline-search__input::-webkit-search-decoration,
+.inline-search__input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+/* Dropdown panel anchored under the input, floating above other sidebar content. */
+.inline-search__panel {
+  position: absolute;
+  inset-block-start: calc(100% + 4px);
+  inset-inline: 0;
+  z-index: 30;
+  max-block-size: 60vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-dark);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px oklch(var(--lch-always-black) / 0.18);
+}
+
+.inline-search__results-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+}
+
+.inline-search__result {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+@media (any-hover: hover) {
+  .inline-search__result:where(:hover) {
+    background: var(--color-message-bg);
+  }
+}
+
+.inline-search__result--active {
+  background: var(--color-selected);
+  box-shadow: inset 0 0 0 1px var(--color-selected-dark);
+}
+
+.inline-search__result-top {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  min-inline-size: 0;
+}
+
+.inline-search__result-room {
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--color-accent);
+  flex: 0 1 auto;
+}
+
+.inline-search__result-author {
+  font-size: 0.7rem;
+  color: var(--color-border-darker);
+  flex: 1 1 auto;
+}
+
+.inline-search__result-snippet {
+  font-size: 0.78rem;
+  color: var(--color-text);
+  display: block;
+}
+
+.inline-search__loading,
+.inline-search__empty {
+  padding: 10px 12px;
+  font-size: 0.78rem;
+  color: var(--color-border-darker);
+}
+
 /* Section labels */
 .sidebar__section-label {
   color: var(--color-border-darker);

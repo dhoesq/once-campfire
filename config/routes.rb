@@ -70,6 +70,7 @@ Rails.application.routes.draw do
       resource :involvement, only: %i[ show update ]
       resource :star, only: %i[ create destroy ]
       resource :read, only: :update
+      resource :archive, only: %i[ create destroy ]
     end
 
     get "@:message_id", to: "rooms#show", as: :at_message
@@ -79,6 +80,7 @@ Rails.application.routes.draw do
     resources :opens
     resources :closeds
     resources :directs
+    resources :archived, only: :index, as: :archived_index
   end
 
   resources :messages do

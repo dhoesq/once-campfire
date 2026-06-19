@@ -23,14 +23,20 @@ module Rooms::InvolvementsHelper
       "invisible" => "Notifications are off and room invisible in sidebar"
     }
 
-    SHARED_INVOLVEMENT_ORDER = %w[ mentions everything nothing invisible ]
+    SHARED_INVOLVEMENT_ORDER = %w[ mentions everything nothing ]
     DIRECT_INVOLVEMENT_ORDER = %w[ everything nothing ]
 
     def next_involvement_for(room, involvement:)
-      if room.direct?
-        DIRECT_INVOLVEMENT_ORDER[DIRECT_INVOLVEMENT_ORDER.index(involvement) + 1] || DIRECT_INVOLVEMENT_ORDER.first
-      else
-        SHARED_INVOLVEMENT_ORDER[SHARED_INVOLVEMENT_ORDER.index(involvement) + 1] || SHARED_INVOLVEMENT_ORDER.first
-      end
+      order = room.direct? ? DIRECT_INVOLVEMENT_ORDER : SHARED_INVOLVEMENT_ORDER
+      next_in_order(order, involvement)
+    end
+
+    # Advances to the next involvement in the cycle. A current involvement that
+    # is not in the order (e.g. a legacy "invisible" membership now that the bell
+    # no longer cycles through it) is treated as before the first entry, so it
+    # recovers to the first visible level instead of raising on `nil + 1`.
+    def next_in_order(order, involvement)
+      idx = order.index(involvement)
+      order[(idx.nil? ? -1 : idx) + 1] || order.first
     end
 end

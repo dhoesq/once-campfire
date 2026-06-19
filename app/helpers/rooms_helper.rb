@@ -58,6 +58,22 @@ module RoomsHelper
     end
   end
 
+  def button_to_archive_room(room)
+    button_to room_archive_url(room), method: :post, class: "btn max-width", aria: { label: "Archive #{room.name}" },
+        data: { turbo_confirm: "Archive this channel? It will disappear from everyone’s sidebar and no new messages can be posted. History stays readable and you can unarchive it later." } do
+      image_tag("lock.svg", aria: { hidden: "true" }, size: 20) +
+      tag.span("Archive #{room_display_name(room)}", class: "overflow-ellipsis")
+    end
+  end
+
+  def button_to_unarchive_room(room)
+    button_to room_archive_url(room), method: :delete, class: "btn max-width", aria: { label: "Unarchive #{room.name}" },
+        data: { turbo_confirm: "Unarchive this channel? It will return to members’ sidebars and accept new messages again." } do
+      image_tag("refresh.svg", aria: { hidden: "true" }, size: 20) +
+      tag.span("Unarchive #{room_display_name(room)}", class: "overflow-ellipsis")
+    end
+  end
+
   def button_to_jump_to_newest_message
     tag.button \
         class: "message-area__return-to-latest btn",

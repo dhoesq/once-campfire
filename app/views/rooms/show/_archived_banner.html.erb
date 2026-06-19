@@ -1,0 +1,6 @@
+<% content_for :footer do %>
+  <div class="composer composer--archived flex align-center justify-center gap pad txt-subtle" role="status">
+    <%= image_tag "lock.svg", size: 20, aria: { hidden: "true" }, class: "colorize--black" %>
+    <span class="txt-small">This channel is archived. You can read its history, but no new messages can be posted.</span>
+  </div>
+<% end %>

@@ -27,6 +27,9 @@ class Room < ApplicationRecord
   scope :directs,         -> { where(type: "Rooms::Direct") }
   scope :without_directs, -> { where.not(type: "Rooms::Direct") }
 
+  scope :active,   -> { where(archived_at: nil) }
+  scope :archived, -> { where.not(archived_at: nil) }
+
   scope :ordered, -> { order("LOWER(name)") }
 
   class << self
@@ -62,6 +65,26 @@ class Room < ApplicationRecord
 
   def default_involvement
     "mentions"
+  end
+
+  # Archiving freezes a channel: it disappears from active sidebars and becomes
+  # read-only, while its history stays viewable. Directs (Pings) are never
+  # archivable; use deletion for those instead.
+  def archivable?
+    !direct?
+  end
+
+  def archived?
+    archived_at.present?
+  end
+
+  def archive
+    return false unless archivable?
+    update!(archived_at: Time.current)
+  end
+
+  def unarchive
+    update!(archived_at: nil)
   end
 
   private

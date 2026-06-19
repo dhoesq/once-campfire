@@ -17,7 +17,10 @@ class Sidebars::Data
   # Returns the @-ivar names the sidebar partials read, as a plain Hash suitable
   # for ApplicationController.render(assigns:) or for copying into a controller.
   def assigns
-    all_memberships = @user.memberships.visible.with_ordered_room
+    # Archived channels (archived_at present) are excluded so a frozen channel
+    # disappears from everyone's active sidebar. Directs are never archivable, so
+    # this only ever filters out channels.
+    all_memberships = @user.memberships.visible.with_ordered_room.where(rooms: { archived_at: nil })
 
     starred = all_memberships.select(&:starred?).sort_by(&:starred_at).reverse
     non_starred = all_memberships.without(starred)

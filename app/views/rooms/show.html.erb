@@ -23,4 +23,8 @@
   <%= button_to_jump_to_newest_message %>
 <% end %>
 
-<%= render "rooms/show/composer", room: @room %>
+<% if @room.archived? %>
+  <%= render "rooms/show/archived_banner", room: @room %>
+<% else %>
+  <%= render "rooms/show/composer", room: @room %>
+<% end %>

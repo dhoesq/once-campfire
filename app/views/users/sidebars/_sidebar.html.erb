@@ -16,9 +16,28 @@
     </button>
   </div>
 
-  <%= link_to searches_path, class: "sidebar__search btn align-center gap", data: { turbo_frame: "_top" } do %>
-    <%= image_tag "search.svg", size: 18, aria: { hidden: "true" }, class: "colorize--black" %>
-    <span class="txt-small overflow-ellipsis">Search</span>
+  <%# Inline (type-ahead) search. The whole thing is one Stimulus-controlled
+      element so it survives Turbo navigations as part of the permanent sidebar
+      frame. The form's action is searches_path (GET searches#index) so if JS is
+      off or the controller fails, Enter still submits to the full-page search.
+      The inline_search controller intercepts typing, fetches the results
+      fragment, and renders the dropdown below. %>
+  <%= form_with url: searches_path, method: :get, class: "sidebar__search-form",
+        data: { controller: "inline-search", action: "submit->inline-search#submit click@window->inline-search#clickOutside keydown->inline-search#keydown" } do |form| %>
+    <div class="sidebar__search btn align-center gap inline-search__row">
+      <%= image_tag "search.svg", size: 18, aria: { hidden: "true" }, class: "colorize--black inline-search__icon" %>
+      <%= form.search_field :q,
+            placeholder: "Search",
+            autocomplete: "off",
+            class: "inline-search__input txt-small",
+            aria: { label: "Search messages" },
+            data: { inline_search_target: "input", action: "input->inline-search#input focus->inline-search#input" } %>
+    </div>
+
+    <div class="inline-search__panel" data-inline-search-target="panel" hidden
+        data-action="click->inline-search#resultClicked">
+      <div class="inline-search__results" data-inline-search-target="results"></div>
+    </div>
   <% end %>
 
   <%= link_to bookmarks_path, class: "sidebar__search btn align-center gap", data: { turbo_frame: "_top" } do %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.2].define(version: 2026_06_18_120200) do
+ActiveRecord::Schema[8.2].define(version: 2026_06_18_120300) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "custom_styles"
@@ -133,11 +133,13 @@ ActiveRecord::Schema[8.2].define(version: 2026_06_18_120200) do
   end
 
   create_table "rooms", force: :cascade do |t|
+    t.datetime "archived_at"
     t.datetime "created_at", null: false
     t.bigint "creator_id", null: false
     t.string "name"
     t.string "type", null: false
     t.datetime "updated_at", null: false
+    t.index ["archived_at"], name: "index_rooms_on_archived_at"
   end
 
   create_table "searches", force: :cascade do |t|

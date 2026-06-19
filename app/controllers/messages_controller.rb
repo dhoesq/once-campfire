@@ -19,6 +19,8 @@ class MessagesController < ApplicationController
 
   def create
     set_room
+    return head :forbidden if @room.archived?
+
     @message = @room.messages.create_with_attachment!(message_params)
 
     @message.broadcast_create

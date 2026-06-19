@@ -3,7 +3,10 @@ class Messages::ByBotsController < MessagesController
 
   def create
     super
-    head :created, location: message_url(@message)
+    # super renders head :forbidden for archived rooms (and room_not_found on a
+    # missing room); only emit the created response when a message was actually
+    # saved and nothing has been rendered yet.
+    head :created, location: message_url(@message) if @message&.persisted? && !performed?
   end
 
   private

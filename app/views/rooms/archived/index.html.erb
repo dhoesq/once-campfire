@@ -1,0 +1,25 @@
+<% @page_title = "Archived channels" %>
+
+<% content_for :nav do %>
+  <div class="flex-item-justify-start">
+    <%= link_back_to_last_room_visited %>
+  </div>
+<% end %>
+
+<section class="panel flex flex-column gap">
+  <h1 class="txt-large txt-align-center margin-none">Archived channels</h1>
+
+  <% if @rooms.any? %>
+    <div class="flex flex-column gap">
+      <% @rooms.each do |room| %>
+        <div class="flex align-center gap fill-shade pad border-radius">
+          <span class="room__hash" aria-hidden="true">#</span>
+          <span class="room__name overflow-ellipsis flex-item-grow"><%= room.name %></span>
+          <%= button_to_unarchive_room room %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="txt-subtle txt-align-center">No archived channels.</p>
+  <% end %>
+</section>

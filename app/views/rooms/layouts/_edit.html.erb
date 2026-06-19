@@ -11,6 +11,16 @@
 </section>
 
 <% if Current.user.can_administer?(@room) %>
+  <% if room.archivable? %>
+    <section class="panel txt-align-center">
+      <% if room.archived? %>
+        <%= button_to_unarchive_room room %>
+      <% else %>
+        <%= button_to_archive_room room %>
+      <% end %>
+    </section>
+  <% end %>
+
   <section class="panel txt-align-center">
     <%= button_to_delete_room room %>
   </section>
