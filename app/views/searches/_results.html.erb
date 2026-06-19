@@ -1,7 +1,30 @@
 <%# Results-only fragment for the sidebar inline (type-ahead) search.
     Served by SearchesController#index (json format, rendered as HTML).
-    @messages is the same user-scoped set the full-page search uses, so
-    access is identical. All dynamic text below is HTML-escaped by ERB. %>
+    @rooms (channels + DMs the user belongs to, matched by name) render first,
+    above @messages (the same user-scoped reachable_messages set the full-page
+    search uses). All dynamic text below is HTML-escaped by ERB. %>
+<% rooms = Array(@rooms) %>
+<% if rooms.any? %>
+  <ul class="inline-search__results-list" role="listbox">
+    <% rooms.each do |room| %>
+      <li role="presentation">
+        <%= link_to room_path(room),
+              class: "inline-search__result inline-search__result--room",
+              role: "option",
+              data: { inline_search_target: "result" } do %>
+          <span class="inline-search__result-top">
+            <% if room.direct? %>
+              <span class="inline-search__result-room overflow-ellipsis"><%= room_display_name(room, for_user: Current.user) %></span>
+            <% else %>
+              <span class="inline-search__result-room overflow-ellipsis"><span class="inline-search__result-glyph" aria-hidden="true">#</span><%= room.name %></span>
+            <% end %>
+          </span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
 <% if @messages.any? %>
   <ul class="inline-search__results-list" role="listbox">
     <% @messages.reverse_each do |message| %>
@@ -19,6 +42,8 @@
       </li>
     <% end %>
   </ul>
-<% else %>
+<% end %>
+
+<% if rooms.empty? && @messages.empty? %>
   <div class="inline-search__empty">No results</div>
 <% end %>

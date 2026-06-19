@@ -53,6 +53,31 @@
     </figure>
   </div>
 
+  <%# Channels + DMs the current user belongs to, matched by name, shown above
+      the message hits. Names are HTML-escaped by ERB. This block sits outside
+      the #search-results message-stream container so it does not touch the
+      search-results stimulus controller or the message rendering hooks. %>
+  <% search_rooms = Array(@rooms) %>
+  <% if search_rooms.any? %>
+    <div class="searches__rooms full-width">
+      <ul class="inline-search__results-list" role="list">
+        <% search_rooms.each do |room| %>
+          <li role="presentation">
+            <%= link_to room_path(room), class: "inline-search__result inline-search__result--room", role: "link" do %>
+              <span class="inline-search__result-top">
+                <% if room.direct? %>
+                  <span class="inline-search__result-room overflow-ellipsis"><%= room_display_name(room, for_user: Current.user) %></span>
+                <% else %>
+                  <span class="inline-search__result-room overflow-ellipsis"><span class="inline-search__result-glyph" aria-hidden="true">#</span><%= room.name %></span>
+                <% end %>
+              </span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <%= search_results_tag do %>
     <%= render @messages %>
   <% end %>

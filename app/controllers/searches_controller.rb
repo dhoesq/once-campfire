@@ -1,5 +1,9 @@
 class SearchesController < ApplicationController
+  # Cap on how many room (channel + DM) hits we show above the message results.
+  ROOM_RESULTS_LIMIT = 10
+
   before_action :set_messages
+  before_action :set_rooms
 
   def index
     @query = query if query.present?
@@ -36,7 +40,61 @@ class SearchesController < ApplicationController
       end
     end
 
+    # Channels (by name) and DMs (by another participant's name) the current user
+    # belongs to, matched against the search term and surfaced above message hits.
+    #
+    # Strictly scoped to Current.user.rooms (through memberships), so this only
+    # ever returns rooms the user is already a member of. Membership includes
+    # rooms whose involvement is "invisible" (a hidden room is still a membership
+    # row), so those stay findable. Archived channels are excluded.
+    #
+    # Computed in a before_action so it runs for BOTH the html (full-page) and
+    # json (inline sidebar) paths off the same logic.
+    def set_rooms
+      term = room_search_term
+
+      if term.present?
+        @rooms = (matched_channels(term) + matched_direct_rooms(term)).first(ROOM_RESULTS_LIMIT)
+      else
+        @rooms = []
+      end
+    end
+
+    # Channels (non-direct rooms): case-insensitive name LIKE, parameterized.
+    # `.active` excludes archived channels (archived_at: nil). `.without_directs`
+    # keeps this to named channels only; DMs are handled separately.
+    def matched_channels(term)
+      Current.user.rooms.active.without_directs
+        .where("lower(rooms.name) LIKE ?", "%#{term.downcase}%")
+        .ordered
+        .to_a
+    end
+
+    # DMs (direct rooms have no name): match when any OTHER participant's name
+    # contains the term (case-insensitive). Directs are never archivable, so no
+    # archived filter is needed, but we still scope to the user's own rooms.
+    # Users are preloaded to avoid per-room queries; the user's direct-room count
+    # is bounded in practice.
+    def matched_direct_rooms(term)
+      needle = term.downcase
+
+      Current.user.rooms.directs.includes(:users).select do |room|
+        room.users.any? do |user|
+          user != Current.user && user.name.to_s.downcase.include?(needle)
+        end
+      end
+    end
+
+    # FTS term for message-body matching: strips non-word chars (SQLite FTS5).
     def query
       params[:q]&.gsub(/[^[:word:]]/, " ")
+    end
+
+    # Term for room-name LIKE matching. Kept separate from `query` so the FTS
+    # sanitization (which can blank out names like "mission-control-feed") does
+    # not strip the characters we need. Lightly trimmed; always bound as a SQL
+    # parameter by the callers above (never interpolated into SQL).
+    def room_search_term
+      params[:q]&.strip
     end
 end
