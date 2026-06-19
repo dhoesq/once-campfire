@@ -23,13 +23,11 @@
   <%= button_to_jump_to_newest_message %>
 <% end %>
 
-<%# Thread panel: a right-side overlay column. Links with
-    data-turbo-frame="thread-panel" navigate the inner frame to the thread view
-    and the controller reveals the panel. Starts empty + hidden. %>
-<aside id="thread-panel-container" class="thread-panel" data-controller="thread-panel" data-thread-panel-open-class="thread-panel--open"
-    data-action="turbo:frame-load->thread-panel#open" hidden>
-  <turbo-frame id="thread-panel" data-thread-panel-target="frame"></turbo-frame>
-</aside>
+<%# Thread panel: an empty PERSISTENT frame (same pattern as the Forward modal).
+    A link with data-turbo-frame="thread-panel" loads the thread overlay into it;
+    the loaded overlay (.thread-panel, position:fixed) is visible simply by being
+    rendered, and closes via element-removal. No open/close toggle needed. %>
+<%= turbo_frame_tag "thread-panel" %>
 
 <% if @room.archived? %>
   <%= render "rooms/show/archived_banner", room: @room %>

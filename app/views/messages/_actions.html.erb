@@ -76,7 +76,7 @@
 
         <%= link_to thread_room_message_path(message.room, message), class: "btn message__action-btn center full-width message__reply-in-thread-btn",
               data: { turbo_frame: "thread-panel", action: "popup#close" }, title: "Create Thread", aria: { label: "Create Thread" } do %>
-          <%= image_tag "reply.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+          <%= image_tag "thread.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
         <% end %>
 
         <%= link_to new_message_forward_path(message), class: "btn message__action-btn center full-width",

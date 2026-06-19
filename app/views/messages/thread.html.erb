@@ -1,39 +1,44 @@
-<%# Thread panel contents, loaded into the #thread-panel turbo-frame. Contains
-    the root message, its replies (chronological), a live per-thread stream
-    subscription, and a thread-scoped composer that posts a reply with a hidden
-    parent_message_id. The main channel timeline and its composer are untouched. %>
-<turbo-frame id="thread-panel">
-  <div class="thread-panel__inner">
-    <header class="thread-panel__header">
-      <h2 class="thread-panel__title">Thread</h2>
-      <button type="button" class="btn btn--plain thread-panel__close" data-action="thread-panel#close" aria-label="Close thread">
-        <%= image_tag "cancel.svg", size: 20, aria: { hidden: "true" }, class: "colorize--black" %>
-      </button>
-    </header>
-
-    <%# Subscribe to the per-thread stream so new replies append live. %>
-    <%= turbo_stream_from @root.room, :thread, @root.id %>
-
-    <div class="thread-panel__messages">
-      <div class="thread-panel__root">
-        <%= render "messages/message", message: @root %>
-      </div>
-
-      <div class="thread-panel__divider">
-        <span><%= pluralize(@thread_replies.size, "reply") %></span>
-      </div>
-
-      <div id="<%= dom_id(@root, :thread_replies) %>" class="thread-panel__replies">
-        <% @thread_replies.each do |reply| %>
-          <%= render "messages/message", message: reply %>
+<%# Thread panel contents, loaded into the persistent #thread-panel turbo-frame.
+    Same pattern as the Forward modal: the `.thread-panel` overlay (position:fixed)
+    is visible simply by being rendered into the frame, and closes via
+    element-removal (the close control removes the overlay → frame goes empty).
+    Contains the root message, its replies (chronological), a live per-thread
+    stream subscription, and a thread-scoped composer that posts a reply with a
+    hidden parent_message_id. The main channel timeline + composer are untouched. %>
+<%= turbo_frame_tag "thread-panel" do %>
+  <div class="thread-panel" data-controller="element-removal">
+    <div class="thread-panel__inner">
+      <header class="thread-panel__header">
+        <h2 class="thread-panel__title">Thread</h2>
+        <%= link_to "#", class: "btn btn--plain thread-panel__close", data: { action: "element-removal#remove" }, aria: { label: "Close thread" } do %>
+          <%= image_tag "cancel.svg", size: 20, aria: { hidden: "true" }, class: "colorize--black" %>
         <% end %>
-      </div>
-    </div>
+      </header>
 
-    <% unless @room.archived? %>
-      <div class="thread-panel__composer">
-        <%= render "messages/thread_composer", room: @room, root: @root %>
+      <%# Subscribe to the per-thread stream so new replies append live. %>
+      <%= turbo_stream_from @root.room, :thread, @root.id %>
+
+      <div class="thread-panel__messages">
+        <div class="thread-panel__root">
+          <%= render "messages/message", message: @root %>
+        </div>
+
+        <div class="thread-panel__divider">
+          <span><%= pluralize(@thread_replies.size, "reply") %></span>
+        </div>
+
+        <div id="<%= dom_id(@root, :thread_replies) %>" class="thread-panel__replies">
+          <% @thread_replies.each do |reply| %>
+            <%= render "messages/message", message: reply %>
+          <% end %>
+        </div>
       </div>
-    <% end %>
+
+      <% unless @room.archived? %>
+        <div class="thread-panel__composer">
+          <%= render "messages/thread_composer", room: @room, root: @root %>
+        </div>
+      <% end %>
+    </div>
   </div>
-</turbo-frame>
+<% end %>
