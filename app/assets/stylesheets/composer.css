@@ -4,6 +4,14 @@
   padding: var(--block-space-half) calc(var(--inline-space) + 1vw);
 }
 
+/* Schedule-send popup. It reuses .message__actions-menu for styling/positioning
+   but lives in the composer, not inside a .message, so the
+   `.message:has([open]) .message__actions-menu { display: block }` reveal rule
+   never matches it. Reveal it here when its own <details> is open. */
+.composer__schedule[open] .message__actions-menu {
+  display: block;
+}
+
 .composer__input-hint,
 .composer__context-btn {
   .composer:has(.composer__input:focus-within) & {
