@@ -17,7 +17,11 @@
         <span class="for-screen-reader">Custom styles</span>
       <% end %>
 
-      <%= link_to rooms_archived_index_path, class: "btn", style: "view-transition-name: archived-channels" do %>
+      <%# Route is `namespace :rooms { resources :archived, only: :index }` => GET
+          /rooms/archived. The `rooms_archived_index_path` helper name did not
+          resolve, which 500'd the entire settings page; use the deterministic
+          literal path instead. %>
+      <%= link_to "/rooms/archived", class: "btn", style: "view-transition-name: archived-channels" do %>
         <%= image_tag "lock.svg", size: 20, aria: { hidden: "true" } %>
         <span class="for-screen-reader">Archived channels</span>
       <% end %>
