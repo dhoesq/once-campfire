@@ -47,6 +47,12 @@ class Room < ApplicationRecord
   end
 
   def receive(message)
+    # Thread replies do not affect the MAIN channel's unread state or fire a
+    # channel push: they belong to a thread, not the channel timeline, and the
+    # channel unread badge counts roots only. Per-thread unread/notify is a
+    # deferred v1 follow-up. A root (normal) message keeps the existing behavior.
+    return if message.thread_reply?
+
     unread_memberships(message)
     push_later(message)
   end

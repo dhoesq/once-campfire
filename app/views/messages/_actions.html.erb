@@ -74,6 +74,11 @@
           <%= image_tag "star.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
         <% end %>
 
+        <%= link_to thread_room_message_path(message.room, message), class: "btn message__action-btn center full-width message__reply-in-thread-btn",
+              data: { turbo_frame: "thread-panel", action: "thread-panel#open popup#close" }, title: "Reply in thread", aria: { label: "Reply in thread" } do %>
+          <%= image_tag "reply.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+        <% end %>
+
         <%= link_to new_message_forward_path(message), class: "btn message__action-btn center full-width",
               data: { turbo_frame: "modal", action: "popup#close" }, title: "Forward", aria: { label: "Forward message" } do %>
           <%= image_tag "share.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>

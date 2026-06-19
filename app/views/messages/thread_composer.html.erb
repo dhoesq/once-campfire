@@ -1,0 +1,38 @@
+<%# Thread-scoped composer. Reuses the same rich_text_area + message form as the
+    main composer, but posts a reply with a hidden parent_message_id so the
+    create path routes it down the thread branch. It does NOT reuse
+    composer_controller (which optimistically inserts into the MAIN timeline);
+    instead a lightweight thread-composer controller handles enter-to-submit and
+    reset. The create turbo_stream response is empty for replies; the reply
+    arrives live in this panel via the per-thread broadcast. %>
+<%= form_with model: Message.new, url: room_messages_path(root.room),
+      class: "thread-composer",
+      data: {
+        controller: "thread-composer",
+        action: "turbo:submit-end->thread-composer#submitEnd"
+      } do |form| %>
+  <%= form.hidden_field :parent_message_id, value: root.id %>
+  <%= form.hidden_field :client_message_id, data: { thread_composer_target: "clientid" } %>
+
+  <div class="thread-composer__row flex align-end gap">
+    <div class="thread-composer__input input input--actor fill-white min-width flex-item-grow" style="--input-border-radius: 1.3rem">
+      <%= form.rich_text_area :body,
+            rows: 1,
+            class: "input",
+            placeholder: "Reply in thread…",
+            aria: { multiline: "true", label: "Reply in thread" },
+            data: {
+              controller: "rich-autocomplete",
+              action: "keydown->thread-composer#submitByKeyboard",
+              rich_autocomplete_url_value: autocompletable_users_path(room_id: root.room.id),
+              thread_composer_target: "text" } %>
+    </div>
+
+    <%= form.button name: "send", type: "submit",
+          class: "btn btn--reversed flex-item-no-shrink txt-small thread-composer__send",
+          data: { action: "thread-composer#submit" } do %>
+      <%= image_tag "arrow-up.svg", size: 20, aria: { hidden: "true" } %>
+      <span class="for-screen-reader">Send reply</span>
+    <% end %>
+  </div>
+<% end %>

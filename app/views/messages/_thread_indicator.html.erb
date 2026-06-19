@@ -1,0 +1,20 @@
+<%#
+  Reply-count affordance for a root message. Lives OUTSIDE the per-message
+  `cache message` fragment so it stays correct on reload (adding a reply does not
+  touch the root's cache key) and is the live-replace target of the per-thread
+  broadcast (target: [ root, :thread_indicator ]).
+
+  Always renders the wrapper element (even with zero replies) so the broadcast
+  replace always finds its target. With zero replies it renders empty.
+%>
+<div id="<%= dom_id(message, :thread_indicator) %>" class="message__thread-indicator-slot">
+  <% count = message.thread_reply_count %>
+  <% if count.positive? %>
+    <%= link_to thread_room_message_path(message.room, message),
+          class: "message__thread-link btn btn--plain",
+          data: { turbo_frame: "thread-panel", action: "thread-panel#open" } do %>
+      <span class="message__thread-link-icon" aria-hidden="true">💬</span>
+      <span class="message__thread-link-count"><%= pluralize(count, "reply") %></span>
+    <% end %>
+  <% end %>
+</div>

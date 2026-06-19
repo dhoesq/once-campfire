@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.2].define(version: 2026_06_18_120300) do
+ActiveRecord::Schema[8.2].define(version: 2026_06_18_121000) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "custom_styles"
@@ -110,11 +110,13 @@ ActiveRecord::Schema[8.2].define(version: 2026_06_18_120300) do
     t.string "client_message_id", null: false
     t.datetime "created_at", null: false
     t.integer "creator_id", null: false
+    t.integer "parent_message_id"
     t.datetime "pinned_at"
     t.integer "pinned_by_id"
     t.integer "room_id", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_messages_on_creator_id"
+    t.index ["parent_message_id"], name: "index_messages_on_parent_message_id"
     t.index ["pinned_by_id"], name: "index_messages_on_pinned_by_id"
     t.index ["room_id", "pinned_at"], name: "index_messages_on_room_id_and_pinned_at"
     t.index ["room_id"], name: "index_messages_on_room_id"

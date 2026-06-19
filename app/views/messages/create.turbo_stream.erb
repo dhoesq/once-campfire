@@ -1,1 +1,9 @@
-<%= turbo_stream.append dom_id(@message.room, :messages), @message %>
+<% if @message.thread_reply? %>
+  <%# Thread replies must never append to the main room timeline. The reply is
+      delivered to the open thread panel via the per-thread broadcast
+      (Message::Broadcasts#broadcast_thread_reply_create), which the submitting
+      user is also subscribed to, so it appears live there. Render nothing for
+      the main timeline here. %>
+<% else %>
+  <%= turbo_stream.append dom_id(@message.room, :messages), @message %>
+<% end %>

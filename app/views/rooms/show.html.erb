@@ -23,6 +23,13 @@
   <%= button_to_jump_to_newest_message %>
 <% end %>
 
+<%# Thread panel: a right-side overlay column. Links with
+    data-turbo-frame="thread-panel" navigate the inner frame to the thread view
+    and the controller reveals the panel. Starts empty + hidden. %>
+<aside id="thread-panel-container" class="thread-panel" data-controller="thread-panel" data-thread-panel-open-class="thread-panel--open" hidden>
+  <turbo-frame id="thread-panel" data-thread-panel-target="frame"></turbo-frame>
+</aside>
+
 <% if @room.archived? %>
   <%= render "rooms/show/archived_banner", room: @room %>
 <% else %>

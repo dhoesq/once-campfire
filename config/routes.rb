@@ -60,7 +60,12 @@ Rails.application.routes.draw do
   end
 
   resources :rooms do
-    resources :messages
+    resources :messages do
+      member do
+        # Thread panel for a root message (root + replies + thread composer).
+        get :thread
+      end
+    end
 
     post ":bot_key/messages", to: "messages/by_bots#create", as: :bot_messages
 

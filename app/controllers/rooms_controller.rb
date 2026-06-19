@@ -42,7 +42,12 @@ class RoomsController < ApplicationController
     end
 
     def find_messages
-      messages = @room.messages.with_creator.with_attachment_details.with_boosts
+      # Main timeline shows ROOT messages only; thread replies live in the
+      # thread panel. Filtering to .roots here keeps replies out of the initial
+      # room render and of the permalink page_around. A permalink that targets a
+      # reply (not a root) falls back to the latest page since the reply is not
+      # part of the main timeline.
+      messages = @room.messages.roots.with_creator.with_attachment_details.with_boosts
 
       if show_first_message = messages.find_by(id: params[:message_id])
         @messages = messages.page_around(show_first_message)

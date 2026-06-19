@@ -4,8 +4,11 @@ class Rooms::RefreshesController < ApplicationController
   before_action :set_last_updated_at
 
   def show
-    @new_messages = @room.messages.with_creator.page_created_since(@last_updated_at)
-    @updated_messages = @room.messages.without(@new_messages).with_creator.page_updated_since(@last_updated_at)
+    # The refresh (reconnect catch-up) repopulates the MAIN timeline, so it must
+    # only carry ROOT messages. Thread replies created/updated since are excluded
+    # here; they reach the thread panel via the per-thread broadcast instead.
+    @new_messages = @room.messages.roots.with_creator.page_created_since(@last_updated_at)
+    @updated_messages = @room.messages.roots.without(@new_messages).with_creator.page_updated_since(@last_updated_at)
   end
 
   private

@@ -54,6 +54,7 @@ class Sidebars::Data
       binds   = unread.flat_map { |m| [ m.room_id, m.unread_at ] }
 
       Message
+        .roots
         .where(clauses.join(" OR "), *binds)
         .where.not(creator_id: @user.id)
         .group(:room_id)

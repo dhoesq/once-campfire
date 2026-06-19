@@ -2,7 +2,7 @@ class MessagesController < ApplicationController
   include ActiveStorage::SetCurrent, RoomScoped
 
   before_action :set_room, except: :create
-  before_action :set_message, only: %i[ show edit update destroy ]
+  before_action :set_message, only: %i[ show edit update destroy thread ]
   before_action :ensure_can_administer, only: %i[ edit update destroy ]
 
   layout false, only: :index
@@ -32,6 +32,15 @@ class MessagesController < ApplicationController
   def show
   end
 
+  # Renders the thread panel for a root message: the root plus its replies in
+  # chronological order, with a thread-scoped composer. A reply target (a
+  # message that is itself a reply) is resolved to its root so the panel always
+  # shows the full thread.
+  def thread
+    @root = @message.thread_reply? ? @message.parent_message : @message
+    @thread_replies = @root.thread_replies.with_creator.ordered
+  end
+
   def edit
   end
 
@@ -57,20 +66,24 @@ class MessagesController < ApplicationController
     end
 
 
+    # The main channel timeline shows ROOT messages only. Thread replies
+    # (parent_message_id present) are excluded here so they never appear in the
+    # main list; they live in the thread panel instead. The `.roots` filter is
+    # applied to every pagination branch (initial last_page, before, after).
     def find_paged_messages
       case
       when params[:before].present?
-        @room.messages.with_creator.page_before(@room.messages.find(params[:before]))
+        @room.messages.roots.with_creator.page_before(@room.messages.find(params[:before]))
       when params[:after].present?
-        @room.messages.with_creator.page_after(@room.messages.find(params[:after]))
+        @room.messages.roots.with_creator.page_after(@room.messages.find(params[:after]))
       else
-        @room.messages.with_creator.last_page
+        @room.messages.roots.with_creator.last_page
       end
     end
 
 
     def message_params
-      params.require(:message).permit(:body, :attachment, :client_message_id)
+      params.require(:message).permit(:body, :attachment, :client_message_id, :parent_message_id)
     end
 
 
