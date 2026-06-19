@@ -106,6 +106,10 @@ Rails.application.routes.draw do
   # rooms/:room_id/read resource above).
   resource :reads, only: :update
 
+  # Machine-triggered disaster-recovery backup. Token-authenticated (see
+  # BackupsController), not behind the session login scope. Only enqueues a job.
+  resource :backups, only: :create
+
   get "webmanifest"    => "pwa#manifest"
   get "service-worker" => "pwa#service_worker"
 

@@ -9,7 +9,7 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libsqlite3-0 libvips libjemalloc2 ffmpeg redis procps && \
+    apt-get install --no-install-recommends -y curl libsqlite3-0 libvips libjemalloc2 ffmpeg redis procps rclone && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archive
 
@@ -37,7 +37,7 @@ RUN bundle install && \
 
 # Cache-bust: bump this value to force a fresh source copy + asset precompile.
 # (Railway was reusing stale cached layers, shipping pre-restyle code/assets.)
-ARG CACHEBUST=20260618-16
+ARG CACHEBUST=20260618-17
 RUN echo "cachebust ${CACHEBUST}"
 
 # Copy application code
