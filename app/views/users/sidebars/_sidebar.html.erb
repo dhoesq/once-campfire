@@ -62,7 +62,7 @@
   </div>
 
   <div class="rooms position-relative flex flex-column gap">
-    <div class="sidebar__section-label">Rooms</div>
+    <div class="sidebar__section-label">Channels</div>
 
     <div id="shared_rooms" contents data-controller="sorted-list">
       <% @other_memberships.each do |membership| %>
@@ -73,7 +73,7 @@
     <% if Current.user.administrator? || !Current.account.settings.restrict_room_creation_to_administrators? %>
       <%= link_to new_rooms_open_path, class: "rooms__new-btn btn room align-center gap", aria: { label: "New Chat Room" } do %>
         <%= image_tag "add.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: new-room" %>
-        <span class="txt-small">New room</span>
+        <span class="txt-small">New channel</span>
       <% end %>
     <% end %>
   </div>
