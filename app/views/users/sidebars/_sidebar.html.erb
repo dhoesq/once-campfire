@@ -21,6 +21,16 @@
     <span class="txt-small overflow-ellipsis">Search</span>
   <% end %>
 
+  <%= link_to bookmarks_path, class: "sidebar__search btn align-center gap", data: { turbo_frame: "_top" } do %>
+    <%= image_tag "star.svg", size: 18, aria: { hidden: "true" }, class: "colorize--black" %>
+    <span class="txt-small overflow-ellipsis">Saved</span>
+  <% end %>
+
+  <%= link_to mentions_path, class: "sidebar__search btn align-center gap", data: { turbo_frame: "_top" } do %>
+    <%= image_tag "notification-bell-mentions.svg", size: 18, aria: { hidden: "true" }, class: "colorize--black" %>
+    <span class="txt-small overflow-ellipsis">Mentions</span>
+  <% end %>
+
   <%= button_to reads_path, method: :patch,
         form: { class: "sidebar__mark-all-read" },
         class: "btn btn--borderless txt-small sidebar__mark-all-read-btn",

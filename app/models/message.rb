@@ -6,6 +6,7 @@ class Message < ApplicationRecord
   belongs_to :pinned_by, class_name: "User", optional: true
 
   has_many :boosts, dependent: :destroy
+  has_many :bookmarks, dependent: :destroy
 
   has_rich_text :body
 

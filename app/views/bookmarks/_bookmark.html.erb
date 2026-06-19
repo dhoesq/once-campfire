@@ -1,0 +1,15 @@
+<%# A saved-message row: the standard (fragment-cached) message partial plus an
+    Unsave control rendered outside that cache, so per-user saved state never
+    leaks across users. %>
+<div id="<%= dom_id(message, :bookmark_row) %>" class="bookmarks__row">
+  <div class="bookmarks__row-tools flex justify-end pad-inline-half">
+    <%= button_to message_bookmark_path(message), method: :delete,
+          class: "btn btn--borderless txt-small bookmarks__unsave-btn",
+          title: "Unsave", aria: { label: "Unsave message" } do %>
+      <%= image_tag "remove.svg", size: 16, class: "colorize--black", aria: { hidden: "true" } %>
+      <span class="txt-small">Unsave</span>
+    <% end %>
+  </div>
+
+  <%= render "messages/message", message: message %>
+</div>

@@ -85,6 +85,7 @@ Rails.application.routes.draw do
     scope module: "messages" do
       resources :boosts
       resource :pin, only: %i[ create destroy ]
+      resource :bookmark, only: %i[ create destroy ]
       resource :forward, only: %i[ new create ]
     end
   end
@@ -92,6 +93,10 @@ Rails.application.routes.draw do
   resources :searches, only: %i[ index create ] do
     delete :clear, on: :collection
   end
+
+  # Full-page lists of the current user's saved messages and @mentions.
+  resources :bookmarks, only: :index
+  resource :mentions, only: :show
 
   resource :unfurl_link, only: :create
 

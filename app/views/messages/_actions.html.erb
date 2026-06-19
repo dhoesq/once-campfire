@@ -65,6 +65,15 @@
           <% end %>
         <% end %>
 
+        <%# Toggle save/unsave. The menu lives inside the per-message fragment
+            cache (keyed on the message, not the user), so it shows a single
+            neutral Save action for everyone; the Saved page is where messages
+            are explicitly removed. %>
+        <%= button_to message_bookmark_path(message), method: :post,
+              class: "btn message__action-btn center full-width", title: "Save", aria: { label: "Save message" }, data: { action: "popup#close" } do %>
+          <%= image_tag "star.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+        <% end %>
+
         <%= link_to new_message_forward_path(message), class: "btn message__action-btn center full-width",
               data: { turbo_frame: "modal", action: "popup#close" }, title: "Forward", aria: { label: "Forward message" } do %>
           <%= image_tag "share.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
