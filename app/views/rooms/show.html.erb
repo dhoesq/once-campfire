@@ -26,7 +26,8 @@
 <%# Thread panel: a right-side overlay column. Links with
     data-turbo-frame="thread-panel" navigate the inner frame to the thread view
     and the controller reveals the panel. Starts empty + hidden. %>
-<aside id="thread-panel-container" class="thread-panel" data-controller="thread-panel" data-thread-panel-open-class="thread-panel--open" hidden>
+<aside id="thread-panel-container" class="thread-panel" data-controller="thread-panel" data-thread-panel-open-class="thread-panel--open"
+    data-action="turbo:frame-load->thread-panel#open" hidden>
   <turbo-frame id="thread-panel" data-thread-panel-target="frame"></turbo-frame>
 </aside>
 

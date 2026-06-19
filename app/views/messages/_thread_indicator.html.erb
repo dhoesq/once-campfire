@@ -12,7 +12,7 @@
   <% if count.positive? %>
     <%= link_to thread_room_message_path(message.room, message),
           class: "message__thread-link btn btn--plain",
-          data: { turbo_frame: "thread-panel", action: "thread-panel#open" } do %>
+          data: { turbo_frame: "thread-panel" } do %>
       <span class="message__thread-link-icon" aria-hidden="true">💬</span>
       <span class="message__thread-link-count"><%= pluralize(count, "reply") %></span>
     <% end %>
