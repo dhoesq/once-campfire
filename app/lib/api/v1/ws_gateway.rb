@@ -31,6 +31,30 @@ module Api
     class WsGateway
       CLOSE_POLICY = 4001 # auth failure / policy violation
 
+      # WebSocket::Driver.rack expects a socket-like object exposing #env, #url,
+      # and #write -- NOT the raw rack env Hash. Passing the Hash raised
+      # "NoMethodError undefined method 'env' for an instance of Hash" on every
+      # connection. This adapter wraps the env + the hijacked IO.
+      class SocketAdapter
+        attr_reader :env, :url
+
+        def initialize(env, io)
+          @env = env
+          @io = io
+          scheme = env["rack.url_scheme"] == "https" ? "wss" : "ws"
+          host = env["HTTP_HOST"] || "localhost"
+          path = env["REQUEST_URI"] ||
+                 [ env["PATH_INFO"], env["QUERY_STRING"] ].reject { |s| s.to_s.empty? }.join("?")
+          @url = "#{scheme}://#{host}#{path}"
+        end
+
+        def write(data)
+          @io.write(data)
+        rescue StandardError
+          nil
+        end
+      end
+
       def self.call(env)
         new(env).call
       end
@@ -52,7 +76,8 @@ module Api
         @io = hijack_io
         return not_supported unless @io
 
-        @driver = WebSocket::Driver.rack(@env)
+        @socket = SocketAdapter.new(@env, @io)
+        @driver = WebSocket::Driver.rack(@socket)
         wire_driver_callbacks
 
         @driver.start
