@@ -89,6 +89,18 @@
   padding-inline: 0.5em;
 }
 
+/* Messages rendered inside the thread panel are NOT processed by the main-timeline
+   JS formatter (which adds .message--formatted to flip visibility on), so they'd
+   stay invisible. Force them visible here, and drop the per-message day separator
+   (which the formatter would otherwise toggle) so it doesn't reserve blank space. */
+.thread-panel .message {
+  visibility: visible;
+}
+
+.thread-panel .message__day-separator {
+  display: none;
+}
+
 .thread-panel__divider {
   align-items: center;
   color: var(--color-border-darker);
