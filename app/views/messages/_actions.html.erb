@@ -88,6 +88,39 @@
               class: "btn message__action-btn center full-width", title: "Mark unread from here", aria: { label: "Mark unread from here" }, data: { action: "popup#close" } do %>
           <%= image_tag "notification-bell-mentions.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
         <% end %>
+
+        <%# Remind me: a personal reminder for the current user about THIS message.
+            Its own nested <details> popup with type="button" controls; it POSTs
+            to RemindersController via the reminder Stimulus controller and does
+            not affect the message itself. Cache-safe (no per-user state here). %>
+        <%= tag.details class: "position-relative message__action-btn message__remind", style: "width: 100%",
+              data: {
+                controller: "popup reminder",
+                action: "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside",
+                popup_orientation_top_class: "popup-orientation-top",
+                reminder_url_value: reminders_path,
+                reminder_message_id_value: message.id
+              } do %>
+          <summary class="btn message__action-btn center full-width" title="Remind me" aria-label="Remind me about this message">
+            <%= image_tag "notification-bell-alert.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+          </summary>
+
+          <div class="message__actions-menu border shadow pad" data-popup-target="menu">
+            <div class="flex flex-column gap-half">
+              <button type="button" class="btn txt-small" data-action="reminder#remind" data-reminder-preset-param="in20min">In 20 min</button>
+              <button type="button" class="btn txt-small" data-action="reminder#remind" data-reminder-preset-param="in1hour">In 1 hour</button>
+              <button type="button" class="btn txt-small" data-action="reminder#remind" data-reminder-preset-param="tomorrow9">Tomorrow 9am</button>
+
+              <label class="txt-small flex flex-column gap-half">
+                <span>Custom</span>
+                <input type="datetime-local" class="input txt-small" data-reminder-target="custom" />
+              </label>
+              <button type="button" class="btn btn--reversed txt-small" data-action="reminder#remindCustom">Remind me</button>
+
+              <span class="txt-small txt-subtle" data-reminder-target="status" aria-live="polite"></span>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   <% end %>

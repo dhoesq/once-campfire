@@ -1,0 +1,25 @@
+<%# One reminder row: a plain-text preview of the message, the (client-localized)
+    remind time, a link to the message permalink, and a Cancel control that
+    destroys it in place via turbo_stream. %>
+<div id="<%= dom_id(reminder) %>" class="reminders__row border shadow pad flex align-center gap">
+  <div class="flex flex-column min-width flex-item-grow">
+    <div class="txt-small txt-subtle flex align-center gap">
+      <span class="overflow-ellipsis"><%= room_display_name(reminder.message.room) %></span>
+      <span>&middot;</span>
+      <time datetime="<%= reminder.remind_at.iso8601 %>" data-local-time-target="datetime"><%= reminder.remind_at.iso8601 %></time>
+    </div>
+    <%= link_to room_at_message_path(reminder.message.room, reminder.message), target: "_top", class: "reminders__preview overflow-ellipsis" do %>
+      <%= truncate(reminder.message.plain_text_body, length: 140) %>
+    <% end %>
+  </div>
+
+  <div class="flex-item-no-shrink">
+    <%= button_to reminder_path(reminder), method: :delete,
+          class: "btn btn--borderless txt-small reminders__cancel-btn",
+          title: "Cancel", aria: { label: "Cancel reminder" },
+          data: { turbo_confirm: "Cancel this reminder?" } do %>
+      <%= image_tag "cancel.svg", size: 16, class: "colorize--black", aria: { hidden: "true" } %>
+      <span class="txt-small">Cancel</span>
+    <% end %>
+  </div>
+</div>

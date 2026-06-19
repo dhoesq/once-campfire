@@ -105,6 +105,12 @@ Rails.application.routes.draw do
   resources :bookmarks, only: :index
   resource :mentions, only: :show
 
+  # Scheduled send (compose now, post later) and personal reminders. Create from
+  # the composer / message action menu; index is the management list; destroy
+  # cancels. All scoped to Current.user in the controllers.
+  resources :scheduled_messages, only: %i[ index create destroy ]
+  resources :reminders, only: %i[ index create destroy ]
+
   resource :unfurl_link, only: :create
 
   # Mark all rooms read for the current user (distinct from the per-room

@@ -21,6 +21,19 @@ rm -f tmp/pids/server.pid
 # is rare.
 FORK_PER_JOB=false INTERVAL=0.1 bundle exec resque-pool &
 
-# Run the web server in the foreground as the controlling process. If it exits,
-# the container exits and Railway restarts the whole thing.
+# Start the in-container scheduler. It delivers due scheduled messages and
+# reminders. The rake task loads Rails once and loops internally (sleeping 60s
+# between passes), so we are NOT rebooting Rails every minute. The outer
+# while-loop is only a supervisor: if the long-lived process ever dies, it is
+# restarted after a short pause. It must live here because it needs the same
+# SQLite volume + DB as web (it cannot be a separate Railway service).
+( while true; do
+    bundle exec rake campfire:sweep
+    echo "[sweep] loop exited, restarting in 5s"
+    sleep 5
+  done ) &
+
+# Run the web server in the foreground as the controlling process (PID 1 via
+# exec). If it exits, the container exits and Railway restarts the whole thing,
+# taking the background Resque pool and sweeper down with it for a clean reboot.
 exec ./bin/rails server -b 0.0.0.0 -p "${PORT:-8080}"

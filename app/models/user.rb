@@ -7,6 +7,9 @@ class User < ApplicationRecord
   has_many :reachable_messages, through: :rooms, source: :messages
   has_many :messages, dependent: :destroy, foreign_key: :creator_id
 
+  has_many :scheduled_messages, dependent: :destroy, foreign_key: :creator_id
+  has_many :reminders, dependent: :destroy
+
   has_many :push_subscriptions, class_name: "Push::Subscription", dependent: :delete_all
 
   has_many :boosts, dependent: :destroy, foreign_key: :booster_id

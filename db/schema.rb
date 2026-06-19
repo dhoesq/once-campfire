@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.2].define(version: 2026_06_18_121000) do
+ActiveRecord::Schema[8.2].define(version: 2026_06_19_120100) do
   create_table "accounts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "custom_styles"
@@ -134,6 +134,18 @@ ActiveRecord::Schema[8.2].define(version: 2026_06_18_121000) do
     t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
   end
 
+  create_table "reminders", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "delivered_at"
+    t.integer "message_id", null: false
+    t.datetime "remind_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["message_id"], name: "index_reminders_on_message_id"
+    t.index ["remind_at"], name: "index_reminders_on_remind_at"
+    t.index ["user_id"], name: "index_reminders_on_user_id"
+  end
+
   create_table "rooms", force: :cascade do |t|
     t.datetime "archived_at"
     t.datetime "created_at", null: false
@@ -142,6 +154,20 @@ ActiveRecord::Schema[8.2].define(version: 2026_06_18_121000) do
     t.string "type", null: false
     t.datetime "updated_at", null: false
     t.index ["archived_at"], name: "index_rooms_on_archived_at"
+  end
+
+  create_table "scheduled_messages", force: :cascade do |t|
+    t.text "body"
+    t.string "client_message_id"
+    t.datetime "created_at", null: false
+    t.integer "creator_id", null: false
+    t.datetime "deliver_at", null: false
+    t.datetime "delivered_at"
+    t.integer "room_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_scheduled_messages_on_creator_id"
+    t.index ["deliver_at"], name: "index_scheduled_messages_on_deliver_at"
+    t.index ["room_id"], name: "index_scheduled_messages_on_room_id"
   end
 
   create_table "searches", force: :cascade do |t|

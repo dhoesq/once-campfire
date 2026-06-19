@@ -1,0 +1,26 @@
+<%# One scheduled-message row: target room, a plain-text preview of the body,
+    the (client-localized) delivery time, and a Cancel control that destroys it
+    in place via turbo_stream. The body column holds rich-text HTML, so we strip
+    tags before truncating for a safe, compact preview. %>
+<div id="<%= dom_id(scheduled_message) %>" class="scheduled-messages__row border shadow pad flex align-center gap">
+  <div class="flex flex-column min-width flex-item-grow">
+    <div class="txt-small txt-subtle flex align-center gap">
+      <span class="overflow-ellipsis"><%= room_display_name(scheduled_message.room) %></span>
+      <span>&middot;</span>
+      <time datetime="<%= scheduled_message.deliver_at.iso8601 %>" data-local-time-target="datetime"><%= scheduled_message.deliver_at.iso8601 %></time>
+    </div>
+    <div class="scheduled-messages__preview overflow-ellipsis">
+      <%= truncate(strip_tags(scheduled_message.body.to_s), length: 140) %>
+    </div>
+  </div>
+
+  <div class="flex-item-no-shrink">
+    <%= button_to scheduled_message_path(scheduled_message), method: :delete,
+          class: "btn btn--borderless txt-small scheduled-messages__cancel-btn",
+          title: "Cancel", aria: { label: "Cancel scheduled message" },
+          data: { turbo_confirm: "Cancel this scheduled message?" } do %>
+      <%= image_tag "cancel.svg", size: 16, class: "colorize--black", aria: { hidden: "true" } %>
+      <span class="txt-small">Cancel</span>
+    <% end %>
+  </div>
+</div>

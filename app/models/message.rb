@@ -8,6 +8,7 @@ class Message < ApplicationRecord
 
   has_many :boosts, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
+  has_many :reminders, dependent: :destroy
   has_many :thread_replies, class_name: "Message", foreign_key: :parent_message_id, dependent: :destroy
 
   has_rich_text :body

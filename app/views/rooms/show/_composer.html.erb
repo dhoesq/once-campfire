@@ -41,6 +41,41 @@
                   <span class="for-screen-reader">Rich text</span>
                 </button>
 
+                <%# Schedule-send affordance. Additive: it is a separate <details>
+                    popup with type="button" controls, so it never submits the
+                    composer form and never touches the normal send button. The
+                    scheduled-send controller reads the composer's current trix
+                    body and POSTs it to ScheduledMessagesController. %>
+                <%= tag.details class: "position-relative flex-item-no-shrink composer__schedule",
+                      data: {
+                        controller: "popup scheduled-send",
+                        action: "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside",
+                        popup_orientation_top_class: "popup-orientation-top",
+                        scheduled_send_url_value: scheduled_messages_path,
+                        scheduled_send_room_id_value: room.id
+                      } do %>
+                  <summary class="btn btn--borderless txt-small flex-item-no-shrink composer__schedule-btn">
+                    <%= image_tag "clock.svg", size: 20, class: "colorize--black", aria: { hidden: "true" } %>
+                    <span class="for-screen-reader">Schedule send</span>
+                  </summary>
+
+                  <div class="message__actions-menu border shadow pad" data-popup-target="menu">
+                    <div class="flex flex-column gap-half">
+                      <button type="button" class="btn txt-small" data-action="scheduled-send#schedule" data-scheduled-send-preset-param="in1hour">In 1 hour</button>
+                      <button type="button" class="btn txt-small" data-action="scheduled-send#schedule" data-scheduled-send-preset-param="tomorrow9">Tomorrow 9am</button>
+                      <button type="button" class="btn txt-small" data-action="scheduled-send#schedule" data-scheduled-send-preset-param="nextmonday9">Next Monday 9am</button>
+
+                      <label class="txt-small flex flex-column gap-half">
+                        <span>Custom</span>
+                        <input type="datetime-local" class="input txt-small" data-scheduled-send-target="custom" />
+                      </label>
+                      <button type="button" class="btn btn--reversed txt-small" data-action="scheduled-send#scheduleCustom">Schedule</button>
+
+                      <span class="txt-small txt-subtle" data-scheduled-send-target="status" aria-live="polite"></span>
+                    </div>
+                  </div>
+                <% end %>
+
                 <%= form.button name: "send", type: "submit", data: { action: "composer#submit" },
                       class: "btn btn--reversed flex-item-no-shrink txt-small" do %>
                   <%= image_tag "arrow-up.svg", size: 20, aria: { hidden: "true" } %>

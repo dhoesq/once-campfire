@@ -50,6 +50,16 @@
     <span class="txt-small overflow-ellipsis">Mentions</span>
   <% end %>
 
+  <%= link_to scheduled_messages_path, class: "sidebar__search btn align-center gap", data: { turbo_frame: "_top" } do %>
+    <%= image_tag "clock.svg", size: 18, aria: { hidden: "true" }, class: "colorize--black" %>
+    <span class="txt-small overflow-ellipsis">Scheduled</span>
+  <% end %>
+
+  <%= link_to reminders_path, class: "sidebar__search btn align-center gap", data: { turbo_frame: "_top" } do %>
+    <%= image_tag "notification-bell-alert.svg", size: 18, aria: { hidden: "true" }, class: "colorize--black" %>
+    <span class="txt-small overflow-ellipsis">Reminders</span>
+  <% end %>
+
   <%= button_to reads_path, method: :patch,
         form: { class: "sidebar__mark-all-read" },
         class: "btn btn--borderless txt-small sidebar__mark-all-read-btn",
