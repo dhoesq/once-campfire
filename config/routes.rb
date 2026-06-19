@@ -1,6 +1,39 @@
 Rails.application.routes.draw do
   root "welcome#show"
 
+  # ── Mission Control API (F-023a/b/c) ────────────────────────
+  # A NEW parallel JSON surface. Paths are RELATIVE to /api/v1 so that MC's
+  # CAMPFIRE_API_URL (which already includes /api/v1) maps directly:
+  #   GET    /api/v1/me
+  #   GET    /api/v1/rooms
+  #   GET    /api/v1/rooms/:room_id/messages
+  #   POST   /api/v1/rooms/:room_id/messages
+  #   PATCH  /api/v1/messages/:id
+  #   DELETE /api/v1/messages/:id
+  #   POST   /api/v1/dms
+  #   GET    /api/v1/users
+  #   GET    /api/v1/search
+  # Realtime gateway (plain-JSON WebSocket): GET /api/v1/ws
+  namespace :api do
+    namespace :v1 do
+      get  "me",     to: "me#show"
+      get  "rooms",  to: "rooms#index"
+
+      get  "rooms/:room_id/messages", to: "messages#index"
+      post "rooms/:room_id/messages", to: "messages#create"
+
+      patch  "messages/:id", to: "messages#update"
+      delete "messages/:id", to: "messages#destroy"
+
+      post "dms",    to: "dms#create"
+      get  "users",  to: "users#index"
+      get  "search", to: "searches#index"
+
+      # Plain-JSON WebSocket realtime gateway (Rack endpoint).
+      mount Api::V1::WsGateway, at: "ws"
+    end
+  end
+
   resource :first_run
 
   resource :session do

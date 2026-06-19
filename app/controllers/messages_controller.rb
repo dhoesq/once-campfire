@@ -48,6 +48,8 @@ class MessagesController < ApplicationController
     @message.update!(message_params)
 
     @message.broadcast_replace_to @room, :messages, target: [ @message, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true }
+    # ADDITIVE: plain-JSON realtime event for the MC mirror (best-effort).
+    Api::V1::Realtime.message_updated(@message)
     redirect_to room_message_url(@room, @message)
   end
 

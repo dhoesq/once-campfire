@@ -5,11 +5,18 @@ module Message::Broadcasts
     else
       broadcast_append_to room, :messages, target: [ room, :messages ]
       ActionCable.server.broadcast("unread_rooms", { roomId: room.id })
+      # ADDITIVE: plain-JSON realtime event for the MC mirror. Lives here so it
+      # fires for EVERY root-message source (web UI, bot/feed bridge, scheduled
+      # sweeper, and the /api/v1 controller), not just one. Best-effort: the
+      # publisher swallows all errors so it can never break a message send.
+      Api::V1::Realtime.message_created(self)
     end
   end
 
   def broadcast_remove
     broadcast_remove_to room, :messages
+    # ADDITIVE: see broadcast_create. id/room_id remain readable post-destroy.
+    Api::V1::Realtime.message_deleted(room_id: room_id, message_id: id)
   end
 
   private
