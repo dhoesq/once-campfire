@@ -1,9 +1,7 @@
 <%# Results-only fragment for the sidebar inline (type-ahead) search.
-    Served by SearchesController#index for format: json (rendered as HTML).
-    @messages is the SAME user-scoped set the full-page search uses
-    (Current.user.reachable_messages.search(query)), so access is identical.
-    All dynamic text below is emitted through ERB <%= %>, which HTML-escapes,
-    so message bodies, sender names, and room names are XSS-safe. %>
+    Served by SearchesController#index (json format, rendered as HTML).
+    @messages is the same user-scoped set the full-page search uses, so
+    access is identical. All dynamic text below is HTML-escaped by ERB. %>
 <% if @messages.any? %>
   <ul class="inline-search__results-list" role="listbox">
     <% @messages.reverse_each do |message| %>
